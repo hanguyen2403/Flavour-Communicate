@@ -1,0 +1,111 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    --backgroundColor: #F9D3C8;
+    --whiteColor: #FCFBF6;
+    --boxTestColor: #F6F7F1;
+    --buttonColor: #5B5C77;
+    --grayColor: #D0CCCC;
+
+    height: 100vh;
+    background: linear-gradient(120deg, #3ca7ee, #9b408f);
+    font-family: 'Lexend Deca', sans-serif;
+    display: flex; /* dàn cả trang */
+    justify-content: center;   /* căn giữa trục x */
+    align-items: center;  /* căn giữa trục y */
+    color: var(--whiteColor);
+}
+
+.container{
+    /* Flavour Smell */
+width: 978px;
+height: 557.69px;
+background: var(--backgroundColor);
+border: 1px solid #000000;
+border-radius: 5px;
+overflow: hidden;
+position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+z-index: 1;
+}
+
+.container-background{
+    z-index: 2;
+}
+
+.container-background .circle1{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    
+} 
+.container-background .circle2{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.container-header{
+background: var(--buttonColor);
+padding: 3.15077px 15px;
+width: 334.3px;
+font-size: 12px;
+text-align: center;
+border-radius: 5px;
+}
+
+.container-body{
+    z-index: 3;
+    margin: 10px 10px;
+    /* background: blue; */
+    width: 95%;
+    height: 90%;
+}
+
+.container-body .test{
+    color: var(--buttonColor);
+    padding-left: 15px;
+    padding-bottom: 5px;
+    font-size: 21px;
+}
+
+.container-body .flex-container{
+    display: flex;
+    justify-content: space-between;
+    /* padding: 0 15px; */
+
+}
+
+.container-body .box-test{
+    background: var(--boxTestColor);
+    width: 685.61px;
+    height: 455.29px;
+    border-radius: 18.9046px;
+    
+}
+
+.container-body .box-button{
+    position: relative;
+    top: 37px;
+    background: violet;
+    width: 206.06px;
+    height: 376px;
+}
+
+/* Rectangle 1 */
+
+/* position: absolute;
+width: 685.61px;
+height: 455.29px;
+left: 33.4px;
+top: 77.51px;
+
+background: #F6F7F1;
+border-radius: 18.9046px; */
+
+

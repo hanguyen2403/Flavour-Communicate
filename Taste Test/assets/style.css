@@ -1,0 +1,371 @@
+/* @mixin settingTextBox(){
+    padding: 10px 5px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+} */
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Lexend', sans-serif;
+}
+body{
+    --backgroundColor: #BDCBB1;
+    --whiteColor: #FCFBF6;
+    --boxTestColor: #DCE8D0;
+    --buttonColor: #5B5C77;
+    --grayColor: #D0CCCC;
+    --onButtonColor: #5A6851;
+    --toggleFixedHeight: 36px;
+    --toggleFixedStroke: 2.29px;
+    --toggleOnColor: #5A6851;
+    --toggleOnStrokeColor: #BDCBB1;
+
+    height: 100vh;
+    background: linear-gradient(120deg, #3ca7ee, #9b408f);
+    font-family: 'Lexend', sans-serif;
+    display: flex; /* dàn cả trang */
+    justify-content: center;   /* căn giữa trục x */
+    align-items: center;  /* căn giữa trục y */
+    color: var(--whiteColor);
+}
+
+.container{
+    /* Flavour Smell */
+width: 1099.29px;
+height: 557.69px;
+background: var(--backgroundColor);
+border: 1px solid #000000;
+border-radius: 5px;
+overflow: hidden;
+position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+z-index: 1;
+}
+
+.container-background{
+    z-index: 2;
+}
+
+.container-background .circle1{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    
+} 
+.container-background .circle2{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.container-header{
+background: var(--buttonColor);
+padding: 3.15077px 15px;
+width: 334.3px;
+font-size: 12px;
+text-align: center;
+border-radius: 5px;
+}
+
+.container-body{
+    z-index: 3;
+    margin: 10px 10px;
+    /* background: blue; */
+    width: 95%;
+    height: 90%;
+}
+
+.container-body .test{
+    color: var(--buttonColor);
+    padding-left: 15px;
+    padding-bottom: 5px;
+    font-size: 21px;
+}
+
+.container-body .flex-container{
+    display: flex;
+    justify-content: space-between;
+    /* padding: 0 15px; */
+
+}
+
+.container-body .box-test{
+    background: var(--boxTestColor);
+    width: 807.37px;
+    height: 455.29px;
+    border-radius: 18.9046px;
+    
+}
+
+.container-body .box-button{
+    position: relative;
+    top: 37px;
+    background: violet;
+    width: 206.06px;
+    height: 376px;
+}
+
+.chanel{
+    display: flex;
+    /* padding-left: 10px;
+    padding-top: 10px; */
+    padding: 15px;
+    gap: 25px;
+    /* justify-content: center; */
+    align-items: center;
+}
+.chanel p{
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--buttonColor);
+}
+
+/* .toggleChanel label{
+    width: 80px;
+	height: 30px;
+	background-color: #aaa;
+	border-radius: 20px;
+	cursor: pointer;
+	position: relative;
+	display: flex;
+	align-items: center;
+} */
+
+.toggleChanel label {
+    width: 80px;
+    height: var(--toggleFixedHeight);
+    border-radius: 20px;
+    background: var(--grayColor);
+    border: var(--toggleFixedStroke) solid var(--buttonColor);
+    cursor: pointer;
+	position: relative;
+	display: flex;
+	align-items: center;
+    transition: .5s;
+}
+/* 
+.toggleChanel label .on{
+    background: var(--toggleOnColor);
+    border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
+} */
+
+.toggleChanel label::after{
+    content: '';
+    width: 25px;
+    height: 25px;
+    background: var(--whiteColor);
+    border-radius: 50%;
+    display: block;
+    transform: translateX(5px);
+    transition: .5s;
+}
+
+.toggleChanel input:checked + label{
+    background: var(--toggleOnColor);
+    border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
+    /* transition: 1s; */
+}
+.toggleChanel input:checked + label::after{
+    transform: translateX(45px);
+    /* transition: 1s; */
+}
+
+#tasteName{
+    color: var(--whiteColor);
+    background: var(--buttonColor);
+    width: 157px;
+    font-size: 18px;
+    padding: 10px 5px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+#tasteName::placeholder {
+    font-weight: 200;
+    color: var(--grayColor);
+    text-align: center; /* Replace 'colorValue' with the color you want */
+}
+#tasteName:focus::placeholder {
+    color: transparent; /* Replace 'colorValue' with the color you want */
+}
+
+.duration{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#duration{
+    width: 63px;
+    /* @include settingTextBox(); */
+    font-size: 18px;
+    padding: 10px 5px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.toggleDuration label{
+    width: 80px;
+    height: var(--toggleFixedHeight);
+    border-radius: 20px;
+    background: var(--grayColor);
+    border: var(--toggleFixedStroke) solid var(--buttonColor);
+    cursor: pointer;
+	position: relative;
+	display: flex;
+	align-items: center;
+    transition: .5s;
+}
+.toggleDuration p{
+    color: var(--whiteColor);
+    font-size: 18px;
+    position: absolute;
+    left: 10px;
+    display: none;
+}
+.toggleDuration label::after{
+    content: '';
+    width: 25px;
+    height: 25px;
+    background: var(--whiteColor);
+    border-radius: 50%;
+    display: block;
+    transform: translateX(5px);
+    transition: .5s;
+}
+
+.toggleDuration input:checked + label{
+    background: var(--buttonColor);
+    border: var(--toggleFixedStroke) solid var(--toggleOnColor);
+    /* transition: 1s; */
+}
+.toggleDuration input:checked + label::after{
+    transform: translateX(45px);
+    /* transition: 1s; */
+}
+.toggleDuration input:checked + label p{
+    display: block;
+}
+
+.toggleDirection label{
+    width: 90px;
+    height: var(--toggleFixedHeight);
+    border-radius: 20px;
+    background: var(--buttonColor);
+    border: var(--toggleFixedStroke) solid var(--toggleOnColor);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: .5s;
+    /* transition-delay: 0.5s; */
+}
+.toggleDirection .push{
+    color: var(--whiteColor);
+    font-size: 18px;
+    position: absolute;
+    left: 35px;
+    /* transition-delay: 0.5s; */
+    /* display: none; */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+.toggleDirection .pull{
+    color: var(--boxTestColor);
+    font-size: 18px;
+    position: absolute;
+    left: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.toggleDirection label::after{
+    content: '';
+    width: 25px;
+    height: 25px;
+    background: var(--whiteColor);
+    border-radius: 50%;
+    display: block;
+    transform: translateX(5px);
+    transition: .5s;
+}
+
+.toggleDirection input:checked + label{
+    background: var(--toggleOnColor);
+    border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
+    /* transition: 1s; */
+}
+.toggleDirection input:checked + label::after{
+    transform: translateX(58px);
+    /* transition: 1s; */
+}
+.toggleDirection input:checked + label .push{
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+.toggleDirection input:checked + label .pull{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+/* .activeBtn  */
+#activeButton {
+    background: var(--buttonColor);
+    font-size: 20px;
+    color: var(--whiteColor);
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 7px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border: none;
+    outline: none;
+    cursor: pointer;
+    /* position: relative; */
+}
+/* label[for="activeButton"] {
+    position: absolute;
+    width: 121px;
+    height: 41px;
+    transform: translateX(-100%);
+} */
+/* .deactiveBtn  */
+#deactiveButton{
+    background: var(--whiteColor);
+    font-size: 20px;
+    color: var(--buttonColor);
+    font-weight: 500;
+    padding: 8px 7px;
+    border-radius: 7px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border: none;
+    outline: none;
+    position: absolute;
+    left: 672px;
+    cursor: pointer;
+}
+/* label[for="deactiveButton"] {
+    position: absolute;
+    width: 121px;
+    height: 41px;
+    transform: translateX(-100%);
+} */
+.hidden{
+    opacity: 0;
+    visibility: none;
+}
+
+/* Button Inf/Variant3 */
+
