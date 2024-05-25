@@ -6,13 +6,14 @@
     text-align: center;
 } */
 
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
     font-family: 'Lexend', sans-serif;
 }
-body{
+
+body {
     --backgroundColor: #BDCBB1;
     --whiteColor: #FCFBF6;
     --boxTestColor: #DCE8D0;
@@ -27,53 +28,57 @@ body{
     height: 100vh;
     background: linear-gradient(120deg, #3ca7ee, #9b408f);
     font-family: 'Lexend', sans-serif;
-    display: flex; /* dàn cả trang */
-    justify-content: center;   /* căn giữa trục x */
-    align-items: center;  /* căn giữa trục y */
+    display: flex;
+    /* dàn cả trang */
+    justify-content: center;
+    /* căn giữa trục x */
+    align-items: center;
+    /* căn giữa trục y */
     color: var(--whiteColor);
 }
 
-.container{
+.container {
     /* Flavour Taste */
-width: 1099.29px;
-height: 557.69px;
-background: var(--backgroundColor);
-border: 1px solid #000000;
-border-radius: 5px;
-overflow: hidden;
-position: relative;
-display: flex;
-flex-direction: column;
-align-items: center;
-z-index: 1;
+    width: 1099.29px;
+    height: 557.69px;
+    background: var(--backgroundColor);
+    border: 1px solid #000000;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
 }
 
-.container-background{
+.container-background {
     z-index: 2;
 }
 
-.container-background .circle1{
+.container-background .circle1 {
     position: absolute;
     left: 0;
     bottom: 0;
-    
-} 
-.container-background .circle2{
+
+}
+
+.container-background .circle2 {
     position: absolute;
     top: 0;
     right: 0;
 }
 
-.container-header{
-background: var(--buttonColor);
-padding: 3.15077px 15px;
-width: 334.3px;
-font-size: 12px;
-text-align: center;
-border-radius: 5px;
+.container-header {
+    background: var(--buttonColor);
+    padding: 3.15077px 15px;
+    width: 334.3px;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 5px;
 }
 
-.container-body{
+.container-body {
     z-index: 3;
     margin: 10px 10px;
     /* background: blue; */
@@ -81,29 +86,29 @@ border-radius: 5px;
     height: 90%;
 }
 
-.container-body .test{
+.container-body .test {
     color: var(--buttonColor);
     padding-left: 15px;
     padding-bottom: 5px;
     font-size: 21px;
 }
 
-.container-body .flex-container{
+.container-body .flex-container {
     display: flex;
     justify-content: space-between;
     /* padding: 0 15px; */
 
 }
 
-.container-body .box-test{
+.container-body .box-test {
     background: var(--boxTestColor);
     width: 807.37px;
     height: 455.29px;
     border-radius: 18.9046px;
-    
+
 }
 
-.container-body .box-button{
+.container-body .box-button {
     position: relative;
     top: 37px;
     background: violet;
@@ -111,7 +116,7 @@ border-radius: 5px;
     height: 376px;
 }
 
-.chanel{
+.chanel {
     display: flex;
     /* padding-left: 10px;
     padding-top: 10px; */
@@ -120,7 +125,8 @@ border-radius: 5px;
     /* justify-content: center; */
     align-items: center;
 }
-.chanel p{
+
+.chanel p {
     font-size: 23px;
     font-weight: 700;
     color: var(--buttonColor);
@@ -144,18 +150,19 @@ border-radius: 5px;
     background: var(--grayColor);
     border: var(--toggleFixedStroke) solid var(--buttonColor);
     cursor: pointer;
-	position: relative;
-	display: flex;
-	align-items: center;
+    position: relative;
+    display: flex;
+    align-items: center;
     transition: .5s;
 }
+
 /* 
 .toggleChanel label .on{
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
 } */
 
-.toggleChanel label::after{
+.toggleChanel label::after {
     content: '';
     width: 25px;
     height: 25px;
@@ -166,17 +173,18 @@ border-radius: 5px;
     transition: .5s;
 }
 
-.toggleChanel input:checked + label{
+.toggleChanel input:checked+label {
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
     /* transition: 1s; */
 }
-.toggleChanel input:checked + label::after{
+
+.toggleChanel input:checked+label::after {
     transform: translateX(45px);
     /* transition: 1s; */
 }
 
-#tasteName{
+#tasteName {
     color: var(--whiteColor);
     background: var(--buttonColor);
     width: 157px;
@@ -191,19 +199,22 @@ border-radius: 5px;
 #tasteName::placeholder {
     font-weight: 200;
     color: var(--grayColor);
-    text-align: center; /* Replace 'colorValue' with the color you want */
-}
-#tasteName:focus::placeholder {
-    color: transparent; /* Replace 'colorValue' with the color you want */
+    text-align: center;
+    /* Replace 'colorValue' with the color you want */
 }
 
-.duration{
+#tasteName:focus::placeholder {
+    color: transparent;
+    /* Replace 'colorValue' with the color you want */
+}
+
+.duration {
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-#duration{
+#duration {
     width: 63px;
     /* @include settingTextBox(); */
     font-size: 18px;
@@ -214,26 +225,28 @@ border-radius: 5px;
     text-align: center;
 }
 
-.toggleDuration label{
+.toggleDuration label {
     width: 80px;
     height: var(--toggleFixedHeight);
     border-radius: 20px;
     background: var(--grayColor);
     border: var(--toggleFixedStroke) solid var(--buttonColor);
     cursor: pointer;
-	position: relative;
-	display: flex;
-	align-items: center;
+    position: relative;
+    display: flex;
+    align-items: center;
     transition: .5s;
 }
-.toggleDuration p{
+
+.toggleDuration p {
     color: var(--whiteColor);
     font-size: 18px;
     position: absolute;
     left: 10px;
     display: none;
 }
-.toggleDuration label::after{
+
+.toggleDuration label::after {
     content: '';
     width: 25px;
     height: 25px;
@@ -244,20 +257,22 @@ border-radius: 5px;
     transition: .5s;
 }
 
-.toggleDuration input:checked + label{
+.toggleDuration input:checked+label {
     background: var(--buttonColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnColor);
     /* transition: 1s; */
 }
-.toggleDuration input:checked + label::after{
+
+.toggleDuration input:checked+label::after {
     transform: translateX(45px);
     /* transition: 1s; */
 }
-.toggleDuration input:checked + label p{
+
+.toggleDuration input:checked+label p {
     display: block;
 }
 
-.toggleDirection label{
+.toggleDirection label {
     width: 90px;
     height: var(--toggleFixedHeight);
     border-radius: 20px;
@@ -270,7 +285,8 @@ border-radius: 5px;
     transition: .5s;
     /* transition-delay: 0.5s; */
 }
-.toggleDirection .push{
+
+.toggleDirection .push {
     color: var(--whiteColor);
     font-size: 18px;
     position: absolute;
@@ -281,7 +297,8 @@ border-radius: 5px;
     visibility: visible;
     transition: opacity 0.5s, visibility 0.5s;
 }
-.toggleDirection .pull{
+
+.toggleDirection .pull {
     color: var(--boxTestColor);
     font-size: 18px;
     position: absolute;
@@ -291,7 +308,7 @@ border-radius: 5px;
     transition: opacity 0.5s, visibility 0.5s;
 }
 
-.toggleDirection label::after{
+.toggleDirection label::after {
     content: '';
     width: 25px;
     height: 25px;
@@ -302,25 +319,29 @@ border-radius: 5px;
     transition: .5s;
 }
 
-.toggleDirection input:checked + label{
+.toggleDirection input:checked+label {
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
     /* transition: 1s; */
 }
-.toggleDirection input:checked + label::after{
+
+.toggleDirection input:checked+label::after {
     transform: translateX(58px);
     /* transition: 1s; */
 }
-.toggleDirection input:checked + label .push{
+
+.toggleDirection input:checked+label .push {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s, visibility 0.5s;
 }
-.toggleDirection input:checked + label .pull{
+
+.toggleDirection input:checked+label .pull {
     opacity: 1;
     visibility: visible;
     transition: opacity 0.5s, visibility 0.5s;
 }
+
 /* .activeBtn  */
 #activeButton {
     background: var(--buttonColor);
@@ -335,6 +356,7 @@ border-radius: 5px;
     cursor: pointer;
     /* position: relative; */
 }
+
 /* label[for="activeButton"] {
     position: absolute;
     width: 121px;
@@ -342,7 +364,7 @@ border-radius: 5px;
     transform: translateX(-100%);
 } */
 /* .deactiveBtn  */
-#deactiveButton{
+#deactiveButton {
     background: var(--whiteColor);
     font-size: 20px;
     color: var(--buttonColor);
@@ -356,15 +378,39 @@ border-radius: 5px;
     left: 672px;
     cursor: pointer;
 }
+
 /* label[for="deactiveButton"] {
     position: absolute;
     width: 121px;
     height: 41px;
     transform: translateX(-100%);
 } */
-.hidden{
+.hidden {
     opacity: 0;
     visibility: none;
+}
+
+/* button for switching pages */
+
+.switch-page {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.switch-page button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.switch-page button:hover {
+    background-color: #45a049;
 }
 
 /* Button Inf/Variant3 */
