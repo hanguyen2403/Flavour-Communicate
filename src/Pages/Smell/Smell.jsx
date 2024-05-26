@@ -204,17 +204,7 @@ const Smell = () => {
                   </div>
                 </div>
 
-                <div className="toggleDirection">
-                  <input
-                    type="checkbox"
-                    id={`checkDirection${i + 1}`}
-                    hidden
-                  />
-                  <label htmlFor={`checkDirection${i + 1}`}>
-                    <p className="push">Push</p>
-                    <p className="pull">Pull</p>
-                  </label>
-                </div>
+                
 
                 {!channel.isActivated ? (
                   <input
@@ -223,7 +213,6 @@ const Smell = () => {
                     value="Activate"
                     disabled={
                       !channel.isChanelEnabled ||
-                      !channel.smellName ||
                       (!channel.isDurationInf && !channel.duration)
                     }
                     onClick={() => handleActivate(i)}
