@@ -13,8 +13,11 @@ const Taste = () => {
       duration: 1000,
       isActivated: false,
       tasteName: '',
+      intensity: 100,
     }))
   );
+
+  const [globalIntensity, setGlobalIntensity] = useState(100);
 
   const handleToggleChanel = (index) => {
     const newChannels = [...channels];
@@ -42,6 +45,12 @@ const Taste = () => {
   const handleTasteNameChange = (index, value) => {
     const newChannels = [...channels];
     newChannels[index].tasteName = value;
+    setChannels(newChannels);
+  };
+
+  const handleIntensityChange = (index, value) => {
+    const newChannels = [...channels];
+    newChannels[index].intensity = value;
     setChannels(newChannels);
   };
 
@@ -110,6 +119,27 @@ const Taste = () => {
     setChannels(newChannels);
   };
 
+  const handleGlobalIntensityChange = (value) => {
+    setGlobalIntensity(value);
+    const newChannels = channels.map((channel) => ({
+      ...channel,
+      intensity: value,
+    }));
+    setChannels(newChannels);
+  };
+
+  /* 
+   <div className="intensity">
+                  <label>Intensity:</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={channel.intensity}
+                    onChange={(e) => handleIntensityChange(i, e.target.value)}
+                  />
+                </div> */
+
   return (
     <div className="container">
       <div className="container-background">
@@ -129,6 +159,8 @@ const Taste = () => {
 
         <div className="flex-container">
           <div className="box-test">
+
+
             {channels.map((channel, i) => (
               <div className="chanel" key={i}>
                 <p>#{i + 1}</p>
@@ -157,6 +189,7 @@ const Taste = () => {
                     type="text"
                     id="duration"
                     value={channel.isDurationInf ? '--' : channel.duration}
+                    disabled={!channel.isChanelEnabled || channel.isActivated || channel.isDurationInf}
                     onChange={(e) => handleDurationChange(i, e.target.value)}
                   />
 
@@ -184,6 +217,7 @@ const Taste = () => {
                   </label>
                 </div>
 
+
                 {!channel.isActivated ? (
                   <input
                     type="button"
@@ -207,6 +241,16 @@ const Taste = () => {
           </div>
 
           <div className="box-button">
+            <div className="global-intensity">
+              <h3>Intensity for all:</h3>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={globalIntensity}
+                onChange={(e) => handleGlobalIntensityChange(e.target.value)}
+              />
+            </div>
             <button onClick={handleActivateSelected}>Activate Selected</button>
             <button onClick={handleActivateAll}>Activate All</button>
             <button onClick={handleDeactivateAll}>Deactivate All</button>

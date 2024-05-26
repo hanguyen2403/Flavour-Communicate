@@ -13,8 +13,11 @@ const Smell = () => {
       duration: 1000,
       isActivated: false,
       smellName: '',
+      intensity: 100,
     }))
   );
+
+  const [globalIntensity, setGlobalIntensity] = useState(100);
 
   const handleToggleChanel = (index) => {
     const newChannels = [...channels];
@@ -116,6 +119,27 @@ const Smell = () => {
     setChannels(newChannels);
   };
 
+  const handleGlobalIntensityChange = (value) => {
+    setGlobalIntensity(value);
+    const newChannels = channels.map((channel) => ({
+      ...channel,
+      intensity: value,
+    }));
+    setChannels(newChannels);
+  };
+
+  /* 
+   <div className="intensity">
+                  <label>Intensity:</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={channel.intensity}
+                    onChange={(e) => handleIntensityChange(i, e.target.value)}
+                  />
+                </div> */
+
   return (
     <div className="container">
       <div className="container-background">
@@ -155,7 +179,6 @@ const Smell = () => {
                   id="smellName"
                   placeholder="Enter smell name"
                   value={channel.smellName}
-                  disabled={!channel.isChanelEnabled || channel.isActivated}
                   onChange={(e) => handleSmellNameChange(i, e.target.value)}
                 />
 
@@ -220,7 +243,17 @@ const Smell = () => {
           </div>
 
           <div className="box-button">
-          <button onClick={handleActivateSelected}>Activate Selected</button>
+            <div className="global-intensity">
+              <h3>Intensity for all:</h3>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={globalIntensity}
+                onChange={(e) => handleGlobalIntensityChange(e.target.value)}
+              />
+            </div>
+            <button onClick={handleActivateSelected}>Activate Selected</button>
             <button onClick={handleActivateAll}>Activate All</button>
             <button onClick={handleDeactivateAll}>Deactivate All</button>
           </div>
