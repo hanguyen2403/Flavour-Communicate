@@ -24,7 +24,7 @@ const Smell = () => {
     newChannels[index].isChanelEnabled = !newChannels[index].isChanelEnabled;
     if (!newChannels[index].isChanelEnabled) {
       newChannels[index].isActivated = false;
-      newChannels[index].smellName = '';
+      // newChannels[index].smellName = '';
       newChannels[index].duration = 1000; // Reset duration
       newChannels[index].isDurationInf = false;
     }
@@ -35,7 +35,7 @@ const Smell = () => {
     const newChannels = [...channels];
     newChannels[index].isDurationInf = !newChannels[index].isDurationInf;
     if (newChannels[index].isDurationInf) {
-      newChannels[index].duration = '--';
+      newChannels[index].duration = '';
     } else {
       newChannels[index].duration = 1000; // Default duration
     }
@@ -141,117 +141,129 @@ const Smell = () => {
                 </div> */
 
   return (
-    <div className="container">
-      <div className="container-background">
-        <img className="circle1" src={circle1} alt="background" />
-        <img className="circle2" src={circle2} alt="background" />
-        <div className="color"></div>
-      </div>
-
-      <div className="container-header">
-        <h1>Flavour Communication</h1>
-      </div>
-
-      <div className="container-body">
-        <div className="test">
-          <h3>Olfactory Interface</h3>
+    <div className="smell">
+      <div className="container1">
+        <div className="container-background">
+          <img className="circle1" src={circle1} alt="background" />
+          <img className="circle2" src={circle2} alt="background" />
+          <div className="color"></div>
         </div>
 
-        <div className="flex-container">
-          <div className="box-test">
-            {channels.map((channel, i) => (
-              <div className="chanel" key={i}>
-                <p>#{i + 1}</p>
+        <div className="container-header">
+          <h1>Flavour Communication</h1>
+        </div>
 
-                <div className="toggleChanel">
-                  <input
-                    type="checkbox"
-                    id={`checkChanel${i + 1}`}
-                    hidden
-                    checked={channel.isChanelEnabled}
-                    onChange={() => handleToggleChanel(i)}
-                  />
-                  <label htmlFor={`checkChanel${i + 1}`}></label>
-                </div>
+        <div className="container-body">
+          <div className="test">
+            <h3>Olfactory Interface</h3>
+          </div>
 
-                <input
-                  type="text"
-                  id="smellName"
-                  placeholder="Enter smell name"
-                  value={channel.smellName}
-                  onChange={(e) => handleSmellNameChange(i, e.target.value)}
-                />
+          <div className="flex-container">
+            <div className="box-test1">
+              <div className="title">
+                <h2 className="title-name">Smell Name:</h2>
+                <h2 className="title-duration">Duration: (ms)</h2>
+              </div>
+              {channels.map((channel, i) => (
+                <div className="chanel" key={i}>
+                  <p>#{i + 1}</p>
 
-                <div className="duration">
-                  <input
-                    type="text"
-                    id="duration"
-                    value={channel.isDurationInf ? '--' : channel.duration}
-                    disabled={!channel.isChanelEnabled || channel.isActivated || channel.isDurationInf}
-                    onChange={(e) => handleDurationChange(i, e.target.value)}
-                  />
-
-                  <div className="toggleDuration">
+                  <div className="toggleChanel">
                     <input
                       type="checkbox"
-                      id={`checkDurationInf${i + 1}`}
+                      id={`checkChanel${i + 1}`}
                       hidden
-                      checked={channel.isDurationInf}
-                      onChange={() => handleToggleDuration(i)}
-                      disabled={!channel.isChanelEnabled || channel.isActivated}
+                      checked={channel.isChanelEnabled}
+                      onChange={() => handleToggleChanel(i)}
                     />
-                    <label htmlFor={`checkDurationInf${i + 1}`}><p>Inf</p></label>
+                    <label htmlFor={`checkChanel${i + 1}`}></label>
                   </div>
+
+                  <input
+                    type="text"
+                    id="smellName"
+                    className={!channel.isChanelEnabled ? 'off' : 'on'}                    placeholder="Enter smell name"
+                    value={channel.smellName}
+                    onChange={(e) => handleSmellNameChange(i, e.target.value)}
+                  />
+
+                  <div className="duration">
+                    <input
+                      type="text"
+                      id="duration"
+                      value={channel.isDurationInf ? '' : channel.duration}
+                      disabled={!channel.isChanelEnabled || channel.isActivated || channel.isDurationInf}
+                      onChange={(e) => handleDurationChange(i, e.target.value)}
+                    />
+
+                    <div className="toggleDuration">
+                      <input
+                        type="checkbox"
+                        id={`checkDurationInf${i + 1}`}
+                        hidden
+                        checked={channel.isDurationInf}
+                        onChange={() => handleToggleDuration(i)}
+                        disabled={!channel.isChanelEnabled || channel.isActivated}
+                      />
+                      <label htmlFor={`checkDurationInf${i + 1}`}><p>Inf</p></label>
+                    </div>
+                  </div>
+
+                  
+
+                  {!channel.isActivated ? (
+                    <input
+                      type="button"
+                      id="activeButton2"
+                      value="Activate"
+                      disabled={
+                        !channel.isChanelEnabled ||
+                        (!channel.isDurationInf && !channel.duration)
+                      }
+                      onClick={() => handleActivate(i)}
+                    />
+                  ) : (
+                    <input
+                      type="button"
+                      id="deactiveButton2"
+                      value="Deactivate"
+                      onClick={() => handleDeactivate(i)}
+                    />
+                  )}
+                  <label htmlFor="activeButton2"></label>
+                  <label htmlFor="deactiveButton2"></label>
                 </div>
-
-                
-
-                {!channel.isActivated ? (
-                  <input
-                    type="button"
-                    id="activeButton"
-                    value="Activate"
-                    disabled={
-                      !channel.isChanelEnabled ||
-                      (!channel.isDurationInf && !channel.duration)
-                    }
-                    onClick={() => handleActivate(i)}
-                  />
-                ) : (
-                  <input
-                    type="button"
-                    id="deactiveButton"
-                    value="Deactivate"
-                    onClick={() => handleDeactivate(i)}
-                  />
-                )}
-                <label htmlFor="activeButton"></label>
-                <label htmlFor="deactiveButton"></label>
-              </div>
-            ))}
-          </div>
-
-          <div className="box-button">
-            <div className="global-intensity">
-              <h3>Intensity for all:</h3>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={globalIntensity}
-                onChange={(e) => handleGlobalIntensityChange(e.target.value)}
-              />
+              ))}
             </div>
-            <button onClick={handleActivateSelected}>Activate Selected</button>
-            <button onClick={handleActivateAll}>Activate All</button>
-            <button onClick={handleDeactivateAll}>Deactivate All</button>
+
+            <div className="box-button">
+              {/* <div className="global-intensity">
+                <h3>Intensity for all:</h3>
+                <input
+                  type="number"
+                  id = "intensityNumber"
+                  min="0"
+                  max="100"
+                  value={globalIntensity}
+                  onChange={(e) => handleGlobalIntensityChange(e.target.value)}
+                />
+              </div> */}
+              <button className='outsideButton ActivateSelected' onClick={handleActivateSelected}>Activate Selected</button>
+              <button className='outsideButton ActivateAll' onClick={handleActivateAll}>Activate All</button>
+              <button className='outsideButton DeactivateAll'onClick={handleDeactivateAll}>Deactivate All</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Button to switch to Taste page */}
-      <div className="switch-page">
-        <button onClick={() => navigate('/taste')}>Go to Taste</button>
+        {/* Button to switch to Taste page */}
+        <div className="switch-page">
+          <button onClick={() => navigate('/taste')}>
+            <span>Go to Taste </span>
+            <span>
+            <i class="fa-solid fa-door-open"></i>
+            </span>
+            </button>
+        </div>
       </div>
     </div>
   );

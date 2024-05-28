@@ -1,11 +1,3 @@
-/* @mixin settingTextBox(){
-    padding: 10px 5px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    text-align: center;
-} */
-
 * {
     padding: 0;
     margin: 0;
@@ -14,16 +6,6 @@
 }
 
 body {
-    --backgroundColor: #BDCBB1;
-    --whiteColor: #FCFBF6;
-    --boxTestColor: #DCE8D0;
-    --buttonColor: #5B5C77;
-    --grayColor: #D0CCCC;
-    --onButtonColor: #5A6851;
-    --toggleFixedHeight: 36px;
-    --toggleFixedStroke: 2.29px;
-    --toggleOnColor: #5A6851;
-    --toggleOnStrokeColor: #BDCBB1;
 
     height: 100vh;
     background: linear-gradient(120deg, #3ca7ee, #9b408f);
@@ -35,6 +17,20 @@ body {
     align-items: center;
     /* căn giữa trục y */
     color: var(--whiteColor);
+}
+
+.taste{
+    --backgroundColor: #BDCBB1;
+    --whiteColor: #FCFBF6;
+    --boxTestColor: #F6F7F1;
+    --buttonColor: #5B5C77;
+    --grayColor: #D0CCCC;
+    --onButtonColor: #5A6851;
+    --toggleFixedHeight: 36px;
+    --toggleFixedStroke: 3px;
+    --toggleOnColor: #BDCBB1;
+    --toggleOnStrokeColor: #5A6851;
+    --disableBackgroundColor: #E3E1DE;
 }
 
 .container {
@@ -73,13 +69,14 @@ body {
     background: var(--buttonColor);
     padding: 3.15077px 15px;
     width: 334.3px;
-    font-size: 12px;
+    font-size: 10px;
     text-align: center;
     border-radius: 5px;
+    z-index: 3;
 }
 
 .container-body {
-    z-index: 3;
+    z-index: 4;
     margin: 10px 10px;
     /* background: blue; */
     width: 95%;
@@ -108,10 +105,27 @@ body {
 
 }
 
+.box-test .title{
+    color:  var(--buttonColor);
+    display: flex;
+    padding-top: 5px;
+}
+.box-test .title h2{
+    font-size: 20px;
+    font-weight: 700;
+    padding-right: 50px;
+    /* padding: 0 10px;
+    margin-left: 190px; */
+}
+.title-name{
+    margin-left: 190px;
+}
+.title-direction{
+    transform: translateX(-15px);
+}
 .container-body .box-button {
     position: relative;
     top: 37px;
-    background: violet;
     width: 206.06px;
     height: 376px;
 }
@@ -120,7 +134,7 @@ body {
     display: flex;
     /* padding-left: 10px;
     padding-top: 10px; */
-    padding: 15px;
+    padding: 13px 15px 15px 15px ;
     gap: 25px;
     /* justify-content: center; */
     align-items: center;
@@ -132,7 +146,7 @@ body {
     color: var(--buttonColor);
 }
 
-/* .toggleChanel label{
+/* .toggleChanel1 label{
     width: 80px;
 	height: 30px;
 	background-color: #aaa;
@@ -143,7 +157,7 @@ body {
 	align-items: center;
 } */
 
-.toggleChanel label {
+.toggleChanel1 label {
     width: 80px;
     height: var(--toggleFixedHeight);
     border-radius: 20px;
@@ -157,12 +171,12 @@ body {
 }
 
 /* 
-.toggleChanel label .on{
+.toggleChanel1 label .on{
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
 } */
 
-.toggleChanel label::after {
+.toggleChanel1 label::after {
     content: '';
     width: 25px;
     height: 25px;
@@ -173,20 +187,20 @@ body {
     transition: .5s;
 }
 
-.toggleChanel input:checked+label {
+.toggleChanel1 input:checked+label {
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
     /* transition: 1s; */
 }
 
-.toggleChanel input:checked+label::after {
+.toggleChanel1 input:checked+label::after {
     transform: translateX(45px);
     /* transition: 1s; */
 }
 
 #tasteName {
     color: var(--whiteColor);
-    background: var(--buttonColor);
+    /* background: var(--buttonColor); */
     width: 157px;
     font-size: 18px;
     padding: 10px 5px;
@@ -198,7 +212,7 @@ body {
 
 #tasteName::placeholder {
     font-weight: 200;
-    color: var(--grayColor);
+    color: var(--disableBackgroundColor);
     text-align: center;
     /* Replace 'colorValue' with the color you want */
 }
@@ -218,6 +232,7 @@ body {
     width: 63px;
     /* @include settingTextBox(); */
     font-size: 18px;
+    background: var(--whiteColor);
     padding: 10px 5px;
     border-radius: 8px;
     border: none;
@@ -277,7 +292,7 @@ body {
     height: var(--toggleFixedHeight);
     border-radius: 20px;
     background: var(--buttonColor);
-    border: var(--toggleFixedStroke) solid var(--toggleOnColor);
+    border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
     cursor: pointer;
     position: relative;
     display: flex;
@@ -299,7 +314,7 @@ body {
 }
 
 .toggleDirection .pull {
-    color: var(--boxTestColor);
+    color: black;
     font-size: 18px;
     position: absolute;
     left: 15px;
@@ -322,12 +337,12 @@ body {
 .toggleDirection input:checked+label {
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
-    /* transition: 1s; */
+    transition: 0.5s;
 }
 
 .toggleDirection input:checked+label::after {
     transform: translateX(58px);
-    /* transition: 1s; */
+    transition: 0.5s;
 }
 
 .toggleDirection input:checked+label .push {
@@ -343,18 +358,25 @@ body {
 }
 
 /* .activeBtn  */
-#activeButton {
+#activeButton1 {
     background: var(--buttonColor);
     font-size: 20px;
     color: var(--whiteColor);
-    font-weight: 500;
-    padding: 8px 20px;
-    border-radius: 7px;
+    font-weight: 600;
+    /* font-family: 'Lexend', sans-serif; */
+    /* padding: 8px 20px; */
+    /* width: 120px; */
+    height: 41px;
+    width: 121px;
+    /* padding: 0 20px; */
+    border-radius: 7px; 
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border: none;
     outline: none;
-    cursor: pointer;
-    /* position: relative; */
+    position: absolute;
+    left: 672px;
+    cursor: pointer;  
+    transition: 0.5s;
 }
 
 /* label[for="activeButton"] {
@@ -364,19 +386,22 @@ body {
     transform: translateX(-100%);
 } */
 /* .deactiveBtn  */
-#deactiveButton {
+#deactiveButton1 {
     background: var(--whiteColor);
     font-size: 20px;
     color: var(--buttonColor);
-    font-weight: 500;
-    padding: 8px 7px;
+    font-weight: 600;
+    /* padding: 0 7px; */
+    width: 121px;
+    height: 41px;
     border-radius: 7px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border: none;
     outline: none;
     position: absolute;
     left: 672px;
-    cursor: pointer;
+    cursor: pointer; 
+    transition: 0.5s;
 }
 
 /* label[for="deactiveButton"] {
@@ -401,16 +426,16 @@ body {
 
 .switch-page button {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: var(--buttonColor);
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .switch-page button:hover {
-    background-color: #45a049;
+    background-color: var(--buttonColor);
 }
 
 /* box button */
@@ -426,29 +451,38 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #564d80;
-    border-radius: 5px;
+    /* margin-bottom: 1px; */
+    padding: 0 5px;
+    width: 200px;
+    background-color: var(--buttonColor);
+    border-radius: 8px;
     color: white;
 }
 
 .global-intensity h3 {
     margin: 0;
-    padding: 5px;
+    font-size: 23px;
+    /* padding: 5px; */
+}
+.global-intensity .limit {
+    margin: 0;
+    font-size: 17px;
+    /* padding: 5px; */
 }
 
 .global-intensity input[type="number"] {
     width: 100px;
-    font-size: 18px;
-    padding: 5px;
-    margin-top: 5px;
-    text-align: center;
+    font-size: 20px;
+    padding: 9px 15px;
+    margin: 5px 0 10px 0;
+    text-align: center; 
     border: 2px solid #564d80;
-    border-radius: 5px;
+    background: white;
+    color: var(--buttonColor);
+    border-radius: 10px;
 }
 
-button {
+/* button {
     width: 150px;
     padding: 10px;
     background-color: #564d80;
@@ -464,9 +498,81 @@ button:hover {
 }
 
 button:disabled {
-    background-color: #d3d3d3;
+    background-color: var(--disabledColor);
     cursor: not-allowed;
+} */
+
+
+
+#duration:disabled{
+    color: var(--grayColor);
+    cursor: not-allowed;
+    border-color: var(--disabledColor);
+}
+.toggleDuration input[type="checkbox"]:disabled + label {
+    color: #ccc; /* Change the text color */
+    border-color: var(--grayColor);
+    background: var(--disableBackgroundColor);
+  }
+  
+  /* Style the custom box when the checkbox is disabled */
+ .toggleDuration input[type="checkbox"]:disabled + label:before {
+    border-color: #ccc; /* Change the border color */
+    background-color: #f0f0f0; /* Change the background color */
+ }
+
+ .toggleDirection input[type="checkbox"]:disabled + label {
+    color: #ccc; /* Change the text color */
+    border-color: var(--grayColor);
+    background: var(--disableBackgroundColor);
+  }
+  .toggleDirection input[type="checkbox"]:disabled + label .push{
+    color: var(--grayColor); /* Change the text color */
+    transition: .5s;
+  }
+  .toggleDirection input[type="checkbox"]:disabled + label .pull{
+    color: var(--grayColor); /* Change the text color */
+    transition: .5s;
+  }
+  /* Style the custom box when the checkbox is disabled */
+  #activeButton1:disabled{
+    background: var(--disableBackgroundColor);
+    color: var(--grayColor);
+    cursor: not-allowed;
+ }
+
+ .off{
+    background: var(--grayColor);
+}
+.on{
+    background: var(--buttonColor);
 }
 
-
-/* Button Inf/Variant3 */
+ .outsideButton{
+    margin-top: 15px;
+ }
+ .ActivateSelected{
+    background: var(--buttonColor);
+    height: 70px;
+    width: 160px;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 10px 12px;
+ }
+ .ActivateAll{
+    background: var(--buttonColor);
+    height: 70px;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 12px 24px;
+ }
+ .DeactivateAll{
+    background: var(--buttonColor);
+    height: 70px;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 12px;
+}
+.outsideButton:focus {
+    outline: none;
+  }
