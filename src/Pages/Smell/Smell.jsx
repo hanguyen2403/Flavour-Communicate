@@ -13,11 +13,8 @@ const Smell = () => {
       duration: 1000,
       isActivated: false,
       smellName: '',
-      intensity: 100,
     }))
   );
-
-  const [globalIntensity, setGlobalIntensity] = useState(100);
 
   const handleToggleChanel = (index) => {
     const newChannels = [...channels];
@@ -54,92 +51,155 @@ const Smell = () => {
     setChannels(newChannels);
   };
 
-  const handleActivate = (index) => {
+  const sendCommandsToArduino = async (commands) => {
+    try {
+      const response = await fetch('http://localhost:3000/send-commands', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commands }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send commands to Arduino');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleActivate = async (index) => {
     const newChannels = [...channels];
     newChannels[index].isActivated = true;
     setChannels(newChannels);
 
     if (!newChannels[index].isDurationInf) {
-      setTimeout(() => {
-        const updatedChannels = [...channels];
-        updatedChannels[index].isActivated = false;
-        setChannels(updatedChannels);
-      }, newChannels[index].duration);
+      try {
+        const command = `${index + 1} 1 ${newChannels[index].duration}`;
+        await sendCommandsToArduino([command]);
+        setTimeout(async () => {
+          const updatedChannels = [...channels];
+          updatedChannels[index].isActivated = false;
+          setChannels(updatedChannels);
+          await sendCommandsToArduino([`${index + 1} 0 0`]); // Deactivate after duration
+        }, parseInt(newChannels[index].duration));
+      } catch (error) {
+        console.error('Error sending command to Arduino:', error);
+      }
+    } else {
+      try {
+        await sendCommandsToArduino([`${index + 1} 1 inf`]);
+      } catch (error) {
+        console.error('Error sending command to Arduino:', error);
+      }
     }
   };
 
-  const handleDeactivate = (index) => {
+  const handleDeactivate = async (index) => {
     const newChannels = [...channels];
     newChannels[index].isActivated = false;
     setChannels(newChannels);
+
+    try {
+      await sendCommandsToArduino([`${index + 1} 0 0`]); // Send deactivation command
+    } catch (error) {
+      console.error('Error sending deactivation command to Arduino:', error);
+    }
   };
 
-  const handleActivateSelected = () => {
+  const handleActivateSelected = async () => {
     const newChannels = [...channels];
+    const activationCommands = [];
+    const deactivationCommands = [];
+    const durations = [];
+
     newChannels.forEach((channel, index) => {
       if (channel.isChanelEnabled && (channel.isDurationInf || channel.duration)) {
-        newChannels[index].isActivated = true;
+        activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
         if (!channel.isDurationInf) {
-          setTimeout(() => {
-            const updatedChannels = [...channels];
-            updatedChannels[index].isActivated = false;
-            setChannels(updatedChannels);
-          }, channel.duration);
+          durations.push({ index, duration: channel.duration });
         }
+        newChannels[index].isActivated = true;
       }
     });
-    setChannels(newChannels);
+
+    if (activationCommands.length > 0) {
+      try {
+        await sendCommandsToArduino(activationCommands);
+        setChannels(newChannels);
+
+        durations.forEach(({ index, duration }) => {
+          setTimeout(() => {
+            newChannels[index].isActivated = false;
+            deactivationCommands.push(`${index + 1} 0 0`);
+            setChannels([...newChannels]);
+          }, parseInt(duration));
+        });
+
+        setTimeout(async () => {
+          if (deactivationCommands.length > 0) {
+            await sendCommandsToArduino(deactivationCommands);
+          }
+        }, Math.max(...durations.map(d => parseInt(d.duration))));
+      } catch (error) {
+        console.error('Error sending commands to Arduino:', error);
+      }
+    }
   };
 
-  const handleActivateAll = () => {
+  const handleActivateAll = async () => {
     const newChannels = channels.map((channel) => ({
       ...channel,
       isChanelEnabled: true,
       isActivated: true,
     }));
 
-    newChannels.forEach((channel, index) => {
-      if (!channel.isDurationInf) {
-        setTimeout(() => {
-          const updatedChannels = [...newChannels];
-          updatedChannels[index].isActivated = false;
-          setChannels(updatedChannels);
-        }, channel.duration);
+    const activationCommands = newChannels.map((channel, index) => `${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
+    const deactivationCommands = [];
+    const durations = newChannels
+      .map((channel, index) => (channel.isDurationInf ? null : { index, duration: channel.duration }))
+      .filter(Boolean);
+
+    if (activationCommands.length > 0) {
+      try {
+        await sendCommandsToArduino(activationCommands);
+        setChannels(newChannels);
+
+        durations.forEach(({ index, duration }) => {
+          setTimeout(() => {
+            newChannels[index].isActivated = false;
+            deactivationCommands.push(`${index + 1} 0 0`);
+            setChannels([...newChannels]);
+          }, parseInt(duration));
+        });
+
+        setTimeout(async () => {
+          if (deactivationCommands.length > 0) {
+            await sendCommandsToArduino(deactivationCommands);
+          }
+        }, Math.max(...durations.map(d => parseInt(d.duration))));
+      } catch (error) {
+        console.error('Error sending commands to Arduino:', error);
       }
-    });
-    setChannels(newChannels);
+    }
   };
 
-  const handleDeactivateAll = () => {
+  const handleDeactivateAll = async () => {
     const newChannels = channels.map((channel) => ({
       ...channel,
       isChanelEnabled: false,
       isActivated: false,
     }));
-    setChannels(newChannels);
+    const deactivationCommands = newChannels.map((channel, index) => `${index + 1} 0 0`);
+    try {
+      await sendCommandsToArduino(deactivationCommands);
+      setChannels(newChannels);
+    } catch (error) {
+      console.error('Error sending commands to Arduino:', error);
+    }
   };
-
-  const handleGlobalIntensityChange = (value) => {
-    setGlobalIntensity(value);
-    const newChannels = channels.map((channel) => ({
-      ...channel,
-      intensity: value,
-    }));
-    setChannels(newChannels);
-  };
-
-  /* 
-   <div className="intensity">
-                  <label>Intensity:</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={channel.intensity}
-                    onChange={(e) => handleIntensityChange(i, e.target.value)}
-                  />
-                </div> */
-
+  
   return (
     <div className="container">
       <div className="container-background">
@@ -204,8 +264,6 @@ const Smell = () => {
                   </div>
                 </div>
 
-                
-
                 {!channel.isActivated ? (
                   <input
                     type="button"
@@ -232,16 +290,6 @@ const Smell = () => {
           </div>
 
           <div className="box-button">
-            <div className="global-intensity">
-              <h3>Intensity for all:</h3>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={globalIntensity}
-                onChange={(e) => handleGlobalIntensityChange(e.target.value)}
-              />
-            </div>
             <button onClick={handleActivateSelected}>Activate Selected</button>
             <button onClick={handleActivateAll}>Activate All</button>
             <button onClick={handleDeactivateAll}>Deactivate All</button>
