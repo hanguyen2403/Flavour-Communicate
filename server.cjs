@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { SerialPort } = require('serialport');
+const { Mutex } = require('async-mutex');
 const path = require('path');
 
 const app = express();
@@ -11,6 +12,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const mutex = new Mutex();
+
 app.post('/send-commands', (req, res) => {
   const { commands } = req.body;
   if (!commands || !Array.isArray(commands)) {
@@ -18,30 +21,39 @@ app.post('/send-commands', (req, res) => {
     return;
   }
 
-  writeToSerialPort(commands.join('\n'), () => {
-    res.send(`Commands sent: ${commands.join(', ')}`);
+  mutex.runExclusive(async () => {
+    try {
+      await writeToSerialPort(commands.join('\n'));
+      res.send(`Commands sent: ${commands.join(', ')}`);
+    } catch (error) {
+      res.status(500).send('Failed to send commands.');
+    }
   });
 });
 
-function writeToSerialPort(data, callback) {
-  const port = new SerialPort({ path: PORT_NAME, baudRate: BAUD_RATE }, (err) => {
-    if (err) {
-      console.error('Failed to open port:', err.message);
-      return;
-    }
-
-    port.write(data + '\n', (err) => {
+async function writeToSerialPort(data) {
+  return new Promise((resolve, reject) => {
+    const port = new SerialPort({ path: PORT_NAME, baudRate: BAUD_RATE }, (err) => {
       if (err) {
-        console.error('An error occurred while writing to the serial port.', err);
-      } else {
-        console.log('Data written to the serial port:', data.trim());
-        callback();
+        console.error('Failed to open port:', err.message);
+        reject(err);
+        return;
       }
 
-      port.close((err) => {
+      port.write(data + '\n', (err) => {
         if (err) {
-          console.error('An error occurred while closing the serial port.', err);
+          console.error('An error occurred while writing to the serial port.', err);
+          reject(err);
+        } else {
+          console.log('Data written to the serial port:', data.trim());
+          resolve();
         }
+
+        port.close((err) => {
+          if (err) {
+            console.error('An error occurred while closing the serial port.', err);
+          }
+        });
       });
     });
   });
