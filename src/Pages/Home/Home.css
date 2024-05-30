@@ -1,0 +1,25 @@
+.home-container h1 {
+    margin-bottom: 20px;
+    font-size: 2.5em;
+    color: #fff;
+}
+
+.home-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.home-buttons button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.home-buttons button:hover {
+    background-color: #45a049;
+}
