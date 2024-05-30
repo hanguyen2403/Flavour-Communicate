@@ -111,14 +111,16 @@ const Smell = () => {
   const handleActivateSelected = async () => {
     const newChannels = [...channels];
     const activationCommands = [];
-    const deactivationCommands = [];
-    const durations = [];
+    const deactivationCommands = {};
 
     newChannels.forEach((channel, index) => {
       if (channel.isChanelEnabled && (channel.isDurationInf || channel.duration)) {
         activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
         if (!channel.isDurationInf) {
-          durations.push({ index, duration: channel.duration });
+          if (!deactivationTimes[channel.duration]) {
+            deactivationTimes[channel.duration] = [];
+          }
+          deactivationTimes[channel.duration].push(index + 1);
         }
         newChannels[index].isActivated = true;
       }
@@ -129,19 +131,17 @@ const Smell = () => {
         await sendCommandsToArduino(activationCommands);
         setChannels(newChannels);
 
-        durations.forEach(({ index, duration }) => {
-          setTimeout(() => {
-            newChannels[index].isActivated = false;
-            deactivationCommands.push(`${index + 1} 0 0`);
-            setChannels([...newChannels]);
+        Object.entries(deactivationTimes).forEach(([duration, indices]) => {
+          setTimeout(async () => {
+            const deactivateCommands = indices.map(index => `${index + 1} 0 0`);
+            await sendCommandsToArduino(deactivateCommands);
+            const updatedChannels = [...channels];
+            indices.forEach(index => {
+              updatedChannels[index - 1].isActivated = false;
+            });
+            setChannels(updatedChannels);
           }, parseInt(duration));
         });
-
-        setTimeout(async () => {
-          if (deactivationCommands.length > 0) {
-            await sendCommandsToArduino(deactivationCommands);
-          }
-        }, Math.max(...durations.map(d => parseInt(d.duration))));
       } catch (error) {
         console.error('Error sending commands to Arduino:', error);
       }
@@ -149,36 +149,41 @@ const Smell = () => {
   };
 
   const handleActivateAll = async () => {
-    const newChannels = channels.map((channel) => ({
-      ...channel,
-      isChanelEnabled: true,
-      isActivated: true,
-    }));
-
-    const activationCommands = newChannels.map((channel, index) => `${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
-    const deactivationCommands = [];
-    const durations = newChannels
-      .map((channel, index) => (channel.isDurationInf ? null : { index, duration: channel.duration }))
-      .filter(Boolean);
-
+    const newChannels = [...channels];
+    const activationCommands = [];
+    const deactivationTimes = {};
+  
+    newChannels.forEach((channel, index) => {
+      if (channel.isDurationInf || channel.duration) {
+        activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
+        if (!channel.isDurationInf) {
+          if (!deactivationTimes[channel.duration]) {
+            deactivationTimes[channel.duration] = [];
+          }
+          deactivationTimes[channel.duration].push(index + 1);
+        }
+        newChannels[index].isActivated = true;
+        newChannels[index].isChanelEnabled = true; // Resetting isChanelEnabled to true
+      }
+    });
+  
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
         setChannels(newChannels);
-
-        durations.forEach(({ index, duration }) => {
-          setTimeout(() => {
-            newChannels[index].isActivated = false;
-            deactivationCommands.push(`${index + 1} 0 0`);
-            setChannels([...newChannels]);
+  
+        Object.entries(deactivationTimes).forEach(([duration, indices]) => {
+          setTimeout(async () => {
+            const deactivateCommands = indices.map(index => `${index} 0 0`);
+            await sendCommandsToArduino(deactivateCommands);
+            const updatedChannels = [...channels];
+            indices.forEach(index => {
+              updatedChannels[index - 1].isActivated = false;
+              updatedChannels[index - 1].isChanelEnabled = false; // Turn off the channel when deactivated
+            });
+            setChannels(updatedChannels);
           }, parseInt(duration));
         });
-
-        setTimeout(async () => {
-          if (deactivationCommands.length > 0) {
-            await sendCommandsToArduino(deactivationCommands);
-          }
-        }, Math.max(...durations.map(d => parseInt(d.duration))));
       } catch (error) {
         console.error('Error sending commands to Arduino:', error);
       }
@@ -186,19 +191,23 @@ const Smell = () => {
   };
 
   const handleDeactivateAll = async () => {
-    const newChannels = channels.map((channel) => ({
-      ...channel,
-      isChanelEnabled: false,
-      isActivated: false,
-    }));
-    const deactivationCommands = newChannels.map((channel, index) => `${index + 1} 0 0`);
-    try {
-      await sendCommandsToArduino(deactivationCommands);
-      setChannels(newChannels);
-    } catch (error) {
-      console.error('Error sending commands to Arduino:', error);
+    const activeChannels = channels.filter(channel => channel.isActivated);
+    if (activeChannels.length > 0) {
+      const newChannels = channels.map((channel) => ({
+        ...channel,
+        isChanelEnabled: false,
+        isActivated: false,
+      }));
+      const deactivationCommands = newChannels.map((channel, index) => `${index + 1} 0 0`);
+      try {
+        await sendCommandsToArduino(deactivationCommands);
+        setChannels(newChannels);
+      } catch (error) {
+        console.error('Error sending commands to Arduino:', error);
+      }
     }
   };
+
   
   return (
     <div className="container">

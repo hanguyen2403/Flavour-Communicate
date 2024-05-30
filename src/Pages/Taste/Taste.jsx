@@ -57,12 +57,6 @@ const Taste = () => {
     setChannels(newChannels);
   };
 
-  const handleIntensityChange = (index, value) => {
-    const newChannels = [...channels];
-    newChannels[index].intensity = value;
-    setChannels(newChannels);
-  };
-
   const handleGlobalIntensityChange = (value) => {
     setGlobalIntensity(value);
     const newChannels = channels.map((channel) => ({
