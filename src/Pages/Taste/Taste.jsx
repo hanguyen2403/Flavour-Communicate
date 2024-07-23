@@ -1,27 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTaste } from '../../Context/TasteContext';
 import './Taste.css';
 import circle1 from '../../assets/circle1.png';
 import circle2 from '../../assets/circle2.png';
 
 const Taste = () => {
   const navigate = useNavigate();
-  const [channels, setChannels] = useState(
-    Array.from({ length: 6 }, () => ({
-      isChanelEnabled: false,
-      isDurationInf: false,
-      duration: 1000,
-      isActivated: false,
-      tasteName: '',
-      intensity: 100,
-      direction: 1, // 1: push, 2: pull
-    }))
-  );
+  const { channels, setChannels } = useTaste()
+  const [localChannels, setLocalChannels] = useState([...channels]);
+
+  useEffect(() => {
+    setChannels(localChannels);
+  }, [localChannels, setChannels]);
 
   const [globalIntensity, setGlobalIntensity] = useState(100);
 
   const handleToggleChanel = (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isChanelEnabled = !newChannels[index].isChanelEnabled;
     if (!newChannels[index].isChanelEnabled) {
       newChannels[index].isActivated = false;
@@ -31,45 +27,45 @@ const Taste = () => {
       newChannels[index].intensity = 100;
       newChannels[index].direction = 1; // Reset direction to push
     }
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleToggleDuration = (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isDurationInf = !newChannels[index].isDurationInf;
     if (newChannels[index].isDurationInf) {
       newChannels[index].duration = '';
     } else {
       newChannels[index].duration = 1000; // Default duration
     }
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleDurationChange = (index, value) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].duration = value;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleTasteNameChange = (index, value) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].tasteName = value;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleGlobalIntensityChange = (value) => {
     setGlobalIntensity(value);
-    const newChannels = channels.map((channel) => ({
+    const newChannels = localChannels.map((channel) => ({
       ...channel,
       intensity: value,
     }));
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleDirectionChange = (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].direction = newChannels[index].direction === 1 ? 2 : 1;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const sendCommandsToArduino = async (commands) => {
@@ -91,18 +87,18 @@ const Taste = () => {
   };
 
   const handleActivate = async (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isActivated = true;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
 
     if (!newChannels[index].isDurationInf) {
       try {
         const command = `${index + 1} ${newChannels[index].direction} ${newChannels[index].duration} ${newChannels[index].intensity}`;
         await sendCommandsToArduino([command]);
         setTimeout(async () => {
-          const updatedChannels = [...channels];
+          const updatedChannels = [...localChannels];
           updatedChannels[index].isActivated = false;
-          setChannels(updatedChannels);
+          setLocalChannels(updatedChannels);
           await sendCommandsToArduino([`${index + 1} 0 0 0`]); // Deactivate after duration
         }, parseInt(newChannels[index].duration));
       } catch (error) {
@@ -118,9 +114,9 @@ const Taste = () => {
   };
 
   const handleDeactivate = async (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isActivated = false;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
 
     try {
       await sendCommandsToArduino([`${index + 1} 0 0 0`]); // Send deactivation command
@@ -130,7 +126,7 @@ const Taste = () => {
   };
 
   const handleActivateSelected = async () => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     const activationCommands = [];
     const deactivationTimes = {};
 
@@ -150,17 +146,17 @@ const Taste = () => {
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
-        setChannels(newChannels);
+        setLocalChannels(newChannels);
 
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
             const deactivateCommands = indices.map(index => `${index} 0 0 0`);
             await sendCommandsToArduino(deactivateCommands);
-            const updatedChannels = [...channels];
+            const updatedChannels = [...localChannels];
             indices.forEach(index => {
               updatedChannels[index - 1].isActivated = false;
             });
-            setChannels(updatedChannels);
+            setLocalChannels(updatedChannels);
           }, parseInt(duration));
         });
       } catch (error) {
@@ -170,7 +166,7 @@ const Taste = () => {
   };
 
   const handleActivateAll = async () => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     const activationCommands = [];
     const deactivationTimes = {};
 
@@ -191,18 +187,18 @@ const Taste = () => {
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
-        setChannels(newChannels);
+        setLocalChannels(newChannels);
 
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
             const deactivateCommands = indices.map(index => `${index} 0 0 0`);
             await sendCommandsToArduino(deactivateCommands);
-            const updatedChannels = [...channels];
+            const updatedChannels = [...localChannels];
             indices.forEach(index => {
               updatedChannels[index - 1].isActivated = false;
               updatedChannels[index - 1].isChanelEnabled = false; // Turn off the channel when deactivated
             });
-            setChannels(updatedChannels);
+            setLocalChannels(updatedChannels);
           }, parseInt(duration));
         });
       } catch (error) {
@@ -214,9 +210,9 @@ const Taste = () => {
 
 
   const handleDeactivateAll = async () => {
-    const activeChannels = channels.filter(channel => channel.isActivated);
+    const activeChannels = localChannels.filter(channel => channel.isActivated);
     if (activeChannels.length > 0) {
-      const newChannels = channels.map((channel) => ({
+      const newChannels = localChannels.map((channel) => ({
         ...channel,
         isChanelEnabled: false,
         isActivated: false,
@@ -224,7 +220,7 @@ const Taste = () => {
       const deactivationCommands = newChannels.map((channel, index) => `${index + 1} 0 0 0`);
       try {
         await sendCommandsToArduino(deactivationCommands);
-        setChannels(newChannels);
+        setLocalChannels(newChannels);
       } catch (error) {
         console.error('Error sending commands to Arduino:', error);
       }
@@ -259,7 +255,7 @@ const Taste = () => {
                 <h2 className="title-direction">Direction:</h2>
               </div>
 
-              {channels.map((channel, i) => (
+              {localChannels.map((channel, i) => (
                 <div className="chanel" key={i}>
                   <p>#{i + 1}</p>
 

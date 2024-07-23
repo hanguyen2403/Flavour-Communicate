@@ -1,54 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSmell } from '../../Context/SmellContext';
 import './Smell.css';
 import circle1 from '../../assets/circle1.png';
 import circle2 from '../../assets/circle2.png';
 
 const Smell = () => {
   const navigate = useNavigate();
-  const [channels, setChannels] = useState(
-    Array.from({ length: 6 }, () => ({
-      isChanelEnabled: false,
-      isDurationInf: false,
-      duration: 1000,
-      isActivated: false,
-      smellName: '',
-    }))
-  );
+  const { channels, setChannels } = useSmell();
+  const [localChannels, setLocalChannels] = useState([...channels]);
+
+  useEffect(() => {
+    setChannels(localChannels);
+  }, [localChannels, setChannels]);
 
   const handleToggleChanel = (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isChanelEnabled = !newChannels[index].isChanelEnabled;
     if (!newChannels[index].isChanelEnabled) {
       newChannels[index].isActivated = false;
-      // newChannels[index].smellName = '';
-      newChannels[index].duration = 1000; // Reset duration
+      newChannels[index].duration = 1000;
       newChannels[index].isDurationInf = false;
     }
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleToggleDuration = (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isDurationInf = !newChannels[index].isDurationInf;
     if (newChannels[index].isDurationInf) {
       newChannels[index].duration = '';
     } else {
-      newChannels[index].duration = 1000; // Default duration
+      newChannels[index].duration = 1000;
     }
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleDurationChange = (index, value) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].duration = value;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const handleSmellNameChange = (index, value) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].smellName = value;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
   };
 
   const sendCommandsToArduino = async (commands) => {
@@ -70,18 +67,18 @@ const Smell = () => {
   };
 
   const handleActivate = async (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isActivated = true;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
 
     if (!newChannels[index].isDurationInf) {
       try {
         const command = `${index + 1} 1 ${newChannels[index].duration}`;
         await sendCommandsToArduino([command]);
         setTimeout(async () => {
-          const updatedChannels = [...channels];
+          const updatedChannels = [...localChannels];
           updatedChannels[index].isActivated = false;
-          setChannels(updatedChannels);
+          setLocalChannels(updatedChannels);
           await sendCommandsToArduino([`${index + 1} 0 0`]); // Deactivate after duration
         }, parseInt(newChannels[index].duration));
       } catch (error) {
@@ -97,9 +94,9 @@ const Smell = () => {
   };
 
   const handleDeactivate = async (index) => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     newChannels[index].isActivated = false;
-    setChannels(newChannels);
+    setLocalChannels(newChannels);
 
     try {
       await sendCommandsToArduino([`${index + 1} 0 0`]); // Send deactivation command
@@ -109,10 +106,10 @@ const Smell = () => {
   };
 
   const handleActivateSelected = async () => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     const activationCommands = [];
     const deactivationTimes = {};
-
+  
     newChannels.forEach((channel, index) => {
       if (channel.isChanelEnabled && (channel.isDurationInf || channel.duration)) {
         activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
@@ -125,21 +122,21 @@ const Smell = () => {
         newChannels[index].isActivated = true;
       }
     });
-
+  
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
-        setChannels(newChannels);
-
+        setLocalChannels(newChannels);
+  
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
-            const deactivateCommands = indices.map(index => `${index + 1} 0 0`);
+            const deactivateCommands = indices.map(index => `${index} 0 0`);
             await sendCommandsToArduino(deactivateCommands);
-            const updatedChannels = [...channels];
+            const updatedChannels = [...localChannels];
             indices.forEach(index => {
-              updatedChannels[index - 1].isActivated = false;
+              updatedChannels[index - 1].isActivated = false; // Correcting for zero-based indexing
             });
-            setChannels(updatedChannels);
+            setLocalChannels(updatedChannels);
           }, parseInt(duration));
         });
       } catch (error) {
@@ -147,9 +144,10 @@ const Smell = () => {
       }
     }
   };
+  
 
   const handleActivateAll = async () => {
-    const newChannels = [...channels];
+    const newChannels = [...localChannels];
     const activationCommands = [];
     const deactivationTimes = {};
 
@@ -170,18 +168,18 @@ const Smell = () => {
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
-        setChannels(newChannels);
+        setLocalChannels(newChannels);
 
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
             const deactivateCommands = indices.map(index => `${index} 0 0`);
             await sendCommandsToArduino(deactivateCommands);
-            const updatedChannels = [...channels];
+            const updatedChannels = [...localChannels];
             indices.forEach(index => {
               updatedChannels[index - 1].isActivated = false;
               updatedChannels[index - 1].isChanelEnabled = false; // Turn off the channel when deactivated
             });
-            setChannels(updatedChannels);
+            setLocalChannels(updatedChannels);
           }, parseInt(duration));
         });
       } catch (error) {
@@ -191,9 +189,9 @@ const Smell = () => {
   };
 
   const handleDeactivateAll = async () => {
-    const activeChannels = channels.filter(channel => channel.isActivated);
+    const activeChannels = localChannels.filter(channel => channel.isActivated);
     if (activeChannels.length > 0) {
-      const newChannels = channels.map((channel) => ({
+      const newChannels = localChannels.map((channel) => ({
         ...channel,
         isChanelEnabled: false,
         isActivated: false,
@@ -201,13 +199,12 @@ const Smell = () => {
       const deactivationCommands = newChannels.map((channel, index) => `${index + 1} 0 0`);
       try {
         await sendCommandsToArduino(deactivationCommands);
-        setChannels(newChannels);
+        setLocalChannels(newChannels);
       } catch (error) {
         console.error('Error sending commands to Arduino:', error);
       }
     }
   };
-
 
   return (
     <div className="smell">
@@ -233,7 +230,7 @@ const Smell = () => {
                 <h2 className="title-name">Smell Name:</h2>
                 <h2 className="title-duration">Duration: (ms)</h2>
               </div>
-              {channels.map((channel, i) => (
+              {localChannels.map((channel, i) => (
                 <div className="chanel" key={i}>
                   <p>#{i + 1}</p>
 
@@ -279,8 +276,6 @@ const Smell = () => {
                     </div>
                   </div>
 
-
-
                   {!channel.isActivated ? (
                     <input
                       type="button"
@@ -307,17 +302,6 @@ const Smell = () => {
             </div>
 
             <div className="box-button">
-              {/* <div className="global-intensity">
-                <h3>Intensity for all:</h3>
-                <input
-                  type="number"
-                  id = "intensityNumber"
-                  min="0"
-                  max="100"
-                  value={globalIntensity}
-                  onChange={(e) => handleGlobalIntensityChange(e.target.value)}
-                />
-              </div> */}
               <button className='outsideButton ActivateSelected' onClick={handleActivateSelected}>Activate Selected</button>
               <button className='outsideButton ActivateAll' onClick={handleActivateAll}>Activate All</button>
               <button className='outsideButton DeactivateAll'onClick={handleDeactivateAll}>Deactivate All</button>
@@ -325,14 +309,13 @@ const Smell = () => {
           </div>
         </div>
 
-        {/* Button to switch to Taste page */}
         <div className="switch-page">
           <button onClick={() => navigate('/taste')}>
             <span>Go to Taste </span>
             <span>
-            <i class="fa-solid fa-door-open"></i>
+              <i className="fa-solid fa-door-open"></i>
             </span>
-            </button>
+          </button>
         </div>
       </div>
     </div>
