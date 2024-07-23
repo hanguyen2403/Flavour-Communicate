@@ -111,7 +111,7 @@ const Smell = () => {
   const handleActivateSelected = async () => {
     const newChannels = [...channels];
     const activationCommands = [];
-    const deactivationCommands = {};
+    const deactivationTimes = {};
 
     newChannels.forEach((channel, index) => {
       if (channel.isChanelEnabled && (channel.isDurationInf || channel.duration)) {
