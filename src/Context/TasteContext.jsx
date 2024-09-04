@@ -10,7 +10,7 @@ export const useTaste = () => useContext(TasteContext);
 export const TasteProvider = ({ children }) => {
   const [channels, setChannels] = useState(
     Array.from({ length: 6 }, () => ({
-      isChanelEnabled: false,
+      isChannelEnabled: false,
       isDurationInf: false,
       duration: 1000,
       initialDuration: 1000,
