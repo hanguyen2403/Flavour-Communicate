@@ -7,7 +7,7 @@ export const useSmell = () => useContext(SmellContext);
 export const SmellProvider = ({ children }) => {
   const [channels, setChannels] = useState(
     Array.from({ length: 6 }, () => ({
-      isChanelEnabled: false,
+      isChannelEnabled: false,
       isDurationInf: false,
       duration: 1000,
       initialDuration: 1000,

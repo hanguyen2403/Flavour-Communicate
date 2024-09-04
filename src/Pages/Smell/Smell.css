@@ -137,7 +137,7 @@ body{
     gap: 10px;
 }
 
-.box-test1 .chanel {
+.box-test1 .channel {
     display: flex;
     /* padding-left: 10px;
     padding-top: 10px; */
@@ -147,13 +147,13 @@ body{
     align-items: center;
 }
 
-.chanel p {
+.channel p {
     font-size: 23px;
     font-weight: 700;
     color: var(--buttonColor);
 }
 
-/* .toggleChanel label{
+/* .toggleChannel label{
     width: 80px;
 	height: 30px;
 	background-color: #aaa;
@@ -164,7 +164,7 @@ body{
 	align-items: center;
 } */
 
-.toggleChanel label {
+.toggleChannel label {
     width: 80px;
     height: var(--toggleFixedHeight);
     border-radius: 20px;
@@ -178,12 +178,12 @@ body{
 }
 
 /* 
-.toggleChanel label .on{
+.toggleChannel label .on{
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
 } */
 
-.toggleChanel label::after {
+.toggleChannel label::after {
     content: '';
     width: 25px;
     height: 25px;
@@ -194,13 +194,13 @@ body{
     transition: .5s;
 }
 
-.toggleChanel input:checked+label {
+.toggleChannel input:checked+label {
     background: var(--toggleOnColor);
     border: var(--toggleFixedStroke) solid var(--toggleOnStrokeColor);
     /* transition: 1s; */
 }
 
-.toggleChanel input:checked+label::after {
+.toggleChannel input:checked+label::after {
     transform: translateX(45px);
     /* transition: 1s; */
 }

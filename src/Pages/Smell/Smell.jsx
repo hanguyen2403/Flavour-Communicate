@@ -10,44 +10,48 @@ const Smell = () => {
   const { channels, setChannels } = useSmell();
   const [localChannels, setLocalChannels] = useState([...channels]);
 
+  // Sync local channels with global state
   useEffect(() => {
     setChannels(localChannels);
   }, [localChannels, setChannels]);
 
-  const handleToggleChanel = (index) => {
-    const newChannels = [...localChannels];
-    newChannels[index].isChanelEnabled = !newChannels[index].isChanelEnabled;
-    if (!newChannels[index].isChanelEnabled) {
-      newChannels[index].isActivated = false;
-      newChannels[index].duration = 1000;
-      newChannels[index].isDurationInf = false;
+  // Toggle the enabled state of a channel
+  const handleToggleChannel = (index) => {
+    const updatedChannels = [...localChannels];
+    const channel = updatedChannels[index];
+    channel.isChannelEnabled = !channel.isChannelEnabled;
+    if (!channel.isChannelEnabled) {
+      channel.isActivated = false;
+      channel.duration = 1000;
+      channel.isDurationInf = false;
     }
-    setLocalChannels(newChannels);
+    setLocalChannels(updatedChannels);
   };
 
+  // Toggle between infinite duration and fixed duration
   const handleToggleDuration = (index) => {
-    const newChannels = [...localChannels];
-    newChannels[index].isDurationInf = !newChannels[index].isDurationInf;
-    if (newChannels[index].isDurationInf) {
-      newChannels[index].duration = '';
-    } else {
-      newChannels[index].duration = 1000;
-    }
-    setLocalChannels(newChannels);
+    const updatedChannels = [...localChannels];
+    const channel = updatedChannels[index];
+    channel.isDurationInf = !channel.isDurationInf;
+    channel.duration = channel.isDurationInf ? '' : 1000;
+    setLocalChannels(updatedChannels);
   };
 
+  // Update duration value
   const handleDurationChange = (index, value) => {
-    const newChannels = [...localChannels];
-    newChannels[index].duration = value;
-    setLocalChannels(newChannels);
+    const updatedChannels = [...localChannels];
+    updatedChannels[index].duration = value;
+    setLocalChannels(updatedChannels);
   };
 
+  // Update smell name
   const handleSmellNameChange = (index, value) => {
-    const newChannels = [...localChannels];
-    newChannels[index].smellName = value;
-    setLocalChannels(newChannels);
+    const updatedChannels = [...localChannels];
+    updatedChannels[index].smellName = value;
+    setLocalChannels(updatedChannels);
   };
 
+  // Send commands to Arduino via API
   const sendCommandsToArduino = async (commands) => {
     try {
       const response = await fetch('http://localhost:3000/send-commands', {
@@ -66,37 +70,35 @@ const Smell = () => {
     }
   };
 
+  // Activate a single channel
   const handleActivate = async (index) => {
-    const newChannels = [...localChannels];
-    newChannels[index].isActivated = true;
-    setLocalChannels(newChannels);
+    const updatedChannels = [...localChannels];
+    updatedChannels[index].isActivated = true;
+    setLocalChannels(updatedChannels);
 
-    if (!newChannels[index].isDurationInf) {
-      try {
-        const command = `${index + 1} 1 ${newChannels[index].duration}`;
-        await sendCommandsToArduino([command]);
+    const channel = updatedChannels[index];
+    const command = channel.isDurationInf ? `${index + 1} 1 inf` : `${index + 1} 1 ${channel.duration}`;
+
+    try {
+      await sendCommandsToArduino([command]);
+      if (!channel.isDurationInf) {
         setTimeout(async () => {
-          const updatedChannels = [...localChannels];
-          updatedChannels[index].isActivated = false;
-          setLocalChannels(updatedChannels);
+          const updated = [...localChannels];
+          updated[index].isActivated = false;
+          setLocalChannels(updated);
           await sendCommandsToArduino([`${index + 1} 0 0`]); // Deactivate after duration
-        }, parseInt(newChannels[index].duration));
-      } catch (error) {
-        console.error('Error sending command to Arduino:', error);
+        }, parseInt(channel.duration));
       }
-    } else {
-      try {
-        await sendCommandsToArduino([`${index + 1} 1 inf`]);
-      } catch (error) {
-        console.error('Error sending command to Arduino:', error);
-      }
+    } catch (error) {
+      console.error('Error sending command to Arduino:', error);
     }
   };
 
+  // Deactivate a single channel
   const handleDeactivate = async (index) => {
-    const newChannels = [...localChannels];
-    newChannels[index].isActivated = false;
-    setLocalChannels(newChannels);
+    const updatedChannels = [...localChannels];
+    updatedChannels[index].isActivated = false;
+    setLocalChannels(updatedChannels);
 
     try {
       await sendCommandsToArduino([`${index + 1} 0 0`]); // Send deactivation command
@@ -105,13 +107,14 @@ const Smell = () => {
     }
   };
 
+  // Activate selected channels
   const handleActivateSelected = async () => {
-    const newChannels = [...localChannels];
+    const updatedChannels = [...localChannels];
     const activationCommands = [];
     const deactivationTimes = {};
-  
-    newChannels.forEach((channel, index) => {
-      if (channel.isChanelEnabled && (channel.isDurationInf || channel.duration)) {
+
+    updatedChannels.forEach((channel, index) => {
+      if (channel.isChannelEnabled && (channel.isDurationInf || channel.duration)) {
         activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
         if (!channel.isDurationInf) {
           if (!deactivationTimes[channel.duration]) {
@@ -119,24 +122,24 @@ const Smell = () => {
           }
           deactivationTimes[channel.duration].push(index + 1);
         }
-        newChannels[index].isActivated = true;
+        updatedChannels[index].isActivated = true;
       }
     });
-  
+
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
-        setLocalChannels(newChannels);
-  
+        setLocalChannels(updatedChannels);
+
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
             const deactivateCommands = indices.map(index => `${index} 0 0`);
             await sendCommandsToArduino(deactivateCommands);
-            const updatedChannels = [...localChannels];
+            const updated = [...localChannels];
             indices.forEach(index => {
-              updatedChannels[index - 1].isActivated = false; // Correcting for zero-based indexing
+              updated[index - 1].isActivated = false; // Correcting for zero-based indexing
             });
-            setLocalChannels(updatedChannels);
+            setLocalChannels(updated);
           }, parseInt(duration));
         });
       } catch (error) {
@@ -144,14 +147,14 @@ const Smell = () => {
       }
     }
   };
-  
 
+  // Activate all channels
   const handleActivateAll = async () => {
-    const newChannels = [...localChannels];
+    const updatedChannels = [...localChannels];
     const activationCommands = [];
     const deactivationTimes = {};
 
-    newChannels.forEach((channel, index) => {
+    updatedChannels.forEach((channel, index) => {
       if (channel.isDurationInf || channel.duration) {
         activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
         if (!channel.isDurationInf) {
@@ -160,26 +163,26 @@ const Smell = () => {
           }
           deactivationTimes[channel.duration].push(index + 1);
         }
-        newChannels[index].isActivated = true;
-        newChannels[index].isChanelEnabled = true; // Resetting isChanelEnabled to true
+        updatedChannels[index].isActivated = true;
+        updatedChannels[index].isChannelEnabled = true; // Resetting isChannelEnabled to true
       }
     });
 
     if (activationCommands.length > 0) {
       try {
         await sendCommandsToArduino(activationCommands);
-        setLocalChannels(newChannels);
+        setLocalChannels(updatedChannels);
 
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
             const deactivateCommands = indices.map(index => `${index} 0 0`);
             await sendCommandsToArduino(deactivateCommands);
-            const updatedChannels = [...localChannels];
+            const updated = [...localChannels];
             indices.forEach(index => {
-              updatedChannels[index - 1].isActivated = false;
-              updatedChannels[index - 1].isChanelEnabled = false; // Turn off the channel when deactivated
+              updated[index - 1].isActivated = false;
+              updated[index - 1].isChannelEnabled = false; // Turn off the channel when deactivated
             });
-            setLocalChannels(updatedChannels);
+            setLocalChannels(updated);
           }, parseInt(duration));
         });
       } catch (error) {
@@ -188,18 +191,19 @@ const Smell = () => {
     }
   };
 
+  // Deactivate all channels
   const handleDeactivateAll = async () => {
     const activeChannels = localChannels.filter(channel => channel.isActivated);
     if (activeChannels.length > 0) {
-      const newChannels = localChannels.map((channel) => ({
+      const updatedChannels = localChannels.map((channel) => ({
         ...channel,
-        isChanelEnabled: false,
+        isChannelEnabled: false,
         isActivated: false,
       }));
-      const deactivationCommands = newChannels.map((channel, index) => `${index + 1} 0 0`);
+      const deactivationCommands = updatedChannels.map((channel, index) => `${index + 1} 0 0`);
       try {
         await sendCommandsToArduino(deactivationCommands);
-        setLocalChannels(newChannels);
+        setLocalChannels(updatedChannels);
       } catch (error) {
         console.error('Error sending commands to Arduino:', error);
       }
@@ -231,26 +235,28 @@ const Smell = () => {
                 <h2 className="title-duration">Duration: (ms)</h2>
               </div>
               {localChannels.map((channel, i) => (
-                <div className="chanel" key={i}>
+                <div className="channel" key={i}>
                   <p>#{i + 1}</p>
 
-                  <div className="toggleChanel">
+                  <div className="toggleChannel">
                     <input
                       type="checkbox"
-                      id={`checkChanel${i + 1}`}
+                      id={`checkChannel${i + 1}`}
                       hidden
-                      checked={channel.isChanelEnabled}
-                      onChange={() => handleToggleChanel(i)}
+                      checked={channel.isChannelEnabled}
+                      disabled={channel.isActivated}
+                      onChange={() => handleToggleChannel(i)}
                     />
-                    <label htmlFor={`checkChanel${i + 1}`}></label>
+                    <label htmlFor={`checkChannel${i + 1}`}></label>
                   </div>
 
                   <input
                     type="text"
                     id="smellName"
-                    className={!channel.isChanelEnabled ? 'off' : 'on'}
+                    className={!channel.isChannelEnabled ? 'off' : 'on'}
                     placeholder="Enter smell name"
                     value={channel.smellName}
+                    disabled={!channel.isChannelEnabled || channel.isActivated}
                     onChange={(e) => handleSmellNameChange(i, e.target.value)}
                   />
 
@@ -259,7 +265,7 @@ const Smell = () => {
                       type="text"
                       id="duration"
                       value={channel.isDurationInf ? '' : channel.duration}
-                      disabled={!channel.isChanelEnabled || channel.isActivated || channel.isDurationInf}
+                      disabled={!channel.isChannelEnabled || channel.isActivated || channel.isDurationInf}
                       onChange={(e) => handleDurationChange(i, e.target.value)}
                     />
 
@@ -269,8 +275,8 @@ const Smell = () => {
                         id={`checkDurationInf${i + 1}`}
                         hidden
                         checked={channel.isDurationInf}
+                        disabled={!channel.isChannelEnabled || channel.isActivated}
                         onChange={() => handleToggleDuration(i)}
-                        disabled={!channel.isChanelEnabled || channel.isActivated}
                       />
                       <label htmlFor={`checkDurationInf${i + 1}`}><p>Inf</p></label>
                     </div>
@@ -282,7 +288,7 @@ const Smell = () => {
                       id="activeButton2"
                       value="Activate"
                       disabled={
-                        !channel.isChanelEnabled ||
+                        !channel.isChannelEnabled ||
                         (!channel.isDurationInf && !channel.duration)
                       }
                       onClick={() => handleActivate(i)}
@@ -304,7 +310,7 @@ const Smell = () => {
             <div className="box-button">
               <button className='outsideButton ActivateSelected' onClick={handleActivateSelected}>Activate Selected</button>
               <button className='outsideButton ActivateAll' onClick={handleActivateAll}>Activate All</button>
-              <button className='outsideButton DeactivateAll'onClick={handleDeactivateAll}>Deactivate All</button>
+              <button className='outsideButton DeactivateAll' onClick={handleDeactivateAll}>Deactivate All</button>
             </div>
           </div>
         </div>
