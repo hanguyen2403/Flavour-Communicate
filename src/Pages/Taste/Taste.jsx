@@ -23,7 +23,6 @@ const Taste = () => {
       updatedChannels[index] = {
         ...updatedChannels[index],
         isActivated: false,
-        tasteName: '',
         duration: 1000,
         isDurationInf: false,
         intensity: 100,
