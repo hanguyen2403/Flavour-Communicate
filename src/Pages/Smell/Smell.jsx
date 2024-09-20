@@ -9,6 +9,7 @@ const Smell = () => {
   const navigate = useNavigate();
   const { channels, setChannels } = useSmell();
   const [localChannels, setLocalChannels] = useState([...channels]);
+  const [previousDuration, setPreviousDuration] = useState(1000);
 
   // Sync local channels with global state
   useEffect(() => {
@@ -22,7 +23,6 @@ const Smell = () => {
     channel.isChannelEnabled = !channel.isChannelEnabled;
     if (!channel.isChannelEnabled) {
       channel.isActivated = false;
-      channel.duration = 1000;
       channel.isDurationInf = false;
     }
     setLocalChannels(updatedChannels);
@@ -32,8 +32,11 @@ const Smell = () => {
   const handleToggleDuration = (index) => {
     const updatedChannels = [...localChannels];
     const channel = updatedChannels[index];
+    if (!localChannels[index].isDurationInf) {
+      setPreviousDuration(localChannels[index].duration); // Save the previous duration
+    }
     channel.isDurationInf = !channel.isDurationInf;
-    channel.duration = channel.isDurationInf ? '' : 1000;
+    channel.duration = channel.isDurationInf ? '' : previousDuration;
     setLocalChannels(updatedChannels);
   };
 

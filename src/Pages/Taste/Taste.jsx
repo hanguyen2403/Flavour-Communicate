@@ -10,6 +10,7 @@ const Taste = () => {
   const { channels, setChannels } = useTaste();
   const [localChannels, setLocalChannels] = useState([...channels]);
   const [globalIntensity, setGlobalIntensity] = useState(100);
+  const [previousDuration, setPreviousDuration] = useState(1000); // Default duration
 
   useEffect(() => {
     setChannels(localChannels);
@@ -23,7 +24,6 @@ const Taste = () => {
       updatedChannels[index] = {
         ...updatedChannels[index],
         isActivated: false,
-        duration: 1000,
         isDurationInf: false,
         intensity: 100,
         direction: 1,
@@ -34,12 +34,15 @@ const Taste = () => {
 
   // Toggle duration mode (infinite or specific duration)
   const handleToggleDuration = (index) => {
+    if (!localChannels[index].isDurationInf){
+      setPreviousDuration(localChannels[index].duration);
+    }
     const updatedChannels = [...localChannels];
     updatedChannels[index].isDurationInf = !updatedChannels[index].isDurationInf;
     if (updatedChannels[index].isDurationInf) {
       updatedChannels[index].duration = '';
     } else {
-      updatedChannels[index].duration = 1000; // Default duration
+      updatedChannels[index].duration =  previousDuration || 1000; // Default duration
     }
     setLocalChannels(updatedChannels);
   };
