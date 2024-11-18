@@ -523,47 +523,94 @@ body{
     background: var(--buttonColor);
 }
 
-.outsideButton{
+/* General styles for outsideButton */
+.outsideButton,
+.disconnectButton,
+.connectButton {
     margin-top: 8px;
     border: none;
     outline: none;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
- }
- .ActivateSelected{
+}
+
+
+.outsideButton:hover {
+    background-color: #403b63;
+}
+
+.disconnectButton:hover{
+    background-color: #ff6347;
+}
+
+.connectButton:hover {
+    background-color: #45a049;
+}
+
+.outsideButton:active,
+.disconnectButton:active,
+.connectButton:active {
+    background: var(--whiteColor);
+    color: var(--buttonColor);
+    border: none;
+    outline: none;
+}
+
+.outsideButton:disabled,
+.disconnectButton:disabled,
+.disconnectButton:disabled {
+    cursor: not-allowed;
+}
+
+.outsideButton:focus,
+.disconnectButton:focus,
+.connectButton:focus {
+    outline: none;
+}
+
+.ActivateSelected {
     background: var(--buttonColor);
     height: 70px;
     width: 160px;
     font-size: 20px;
     font-weight: 600;
     padding: 10px 12px;
- }
- .ActivateAll{
+}
+
+.ActivateAll {
     background: var(--buttonColor);
     height: 70px;
     font-size: 20px;
     font-weight: 600;
     padding: 12px 24px;
- }
- .DeactivateAll{
+}
+
+.DeactivateAll {
     background: var(--buttonColor);
     height: 70px;
     font-size: 20px;
     font-weight: 600;
     padding: 12px;
 }
-.outsideButton:hover {
-    background-color: #403b63;
+
+.ConnectButton {
+    background: #4CAF50;
+    height: 70px;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    border-radius: 4px;
 }
 
-.outsideButton:active{
-    background: var(--whiteColor);
-    color: var(--buttonColor);
-    border: none;
-    outline: none;
-}
-.outsideButton:disabled {
-    cursor: not-allowed;
-}
-.outsideButton:focus {
-    outline: none;
+.DisconnectSerial {
+    background: red;
+    height: 70px;
+    width: 160px;
+    font-size: 20px;
+    font-weight: 600;
+    color: black;
+    padding: 12px;
 }
