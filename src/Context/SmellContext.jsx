@@ -17,9 +17,13 @@ export const SmellProvider = ({ children }) => {
     }))
   );
 
+  const [port, setPort] = useState(null);
+  const [reader, setReader] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
+
   return (
-    <SmellContext.Provider value={{ channels, setChannels }}>
-      {children}
+    <SmellContext.Provider value={{ channels, setChannels, port, setPort, isConnected, setIsConnected, reader, setReader}}>
+      {children}    
     </SmellContext.Provider>
   );
 };
