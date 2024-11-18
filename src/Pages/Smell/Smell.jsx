@@ -32,7 +32,7 @@ const Smell = () => {
     try {
       if (!port) {
         const selectedPort = await navigator.serial.requestPort();
-        await selectedPort.open({ baudRate: 9600 });
+        await selectedPort.open({ baudRate: 115200 });
         setPort(selectedPort);
         setIsConnected(true);
         console.log('Connected to serial port!');

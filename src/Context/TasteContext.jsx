@@ -1,13 +1,12 @@
 import React, { createContext, useState, useContext } from 'react';
+import { useSerial } from './SerialContext';
 
-// Create Context
 const TasteContext = createContext();
 
-// Custom hook to use the TasteContext
 export const useTaste = () => useContext(TasteContext);
 
-// Provider Component
 export const TasteProvider = ({ children }) => {
+  const { port, setPort, isConnected, setIsConnected, reader, setReader } = useSerial();
   const [channels, setChannels] = useState(
     Array.from({ length: 6 }, () => ({
       isChannelEnabled: false,
@@ -21,10 +20,9 @@ export const TasteProvider = ({ children }) => {
       direction: 1, // 1: push, 2: pull
     }))
   );
-;
 
   return (
-    <TasteContext.Provider value={{ channels, setChannels }}>
+    <TasteContext.Provider value={{ channels, setChannels, port, setPort, isConnected, setIsConnected, reader, setReader }}>
       {children}
     </TasteContext.Provider>
   );
