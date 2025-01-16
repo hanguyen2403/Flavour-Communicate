@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSmell } from '../../Context/SmellContext';
-import './Smell.css';
-import circle1 from '../../assets/circle1.png';
-import circle2 from '../../assets/circle2.png';
-
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSmell } from "../../Context/SmellContext";
+import "./Smell.css";
+// import {Header} from "../../Components/Header/Header.jsx";
+import circle1 from "../../assets/circle1.png";
+import circle2 from "../../assets/circle2.png";
 const Smell = () => {
   const navigate = useNavigate();
-  const { channels, setChannels, port, setPort, isConnected, setIsConnected, reader, setReader } = useSmell();
+  const {
+    channels,
+    setChannels,
+    port,
+    setPort,
+    isConnected,
+    setIsConnected,
+    reader,
+    setReader,
+  } = useSmell();
   const [localChannels, setLocalChannels] = useState([...channels]);
   const [previousDuration, setPreviousDuration] = useState(1000);
   const [isLoading, setIsLoading] = useState(false);
-  const [serialOutput, setSerialOutput] = useState(''); // Store serial output
-
-
+  const [serialOutput, setSerialOutput] = useState(""); // Store serial output
 
   useEffect(() => {
     setChannels(localChannels);
@@ -21,7 +28,7 @@ const Smell = () => {
 
   useEffect(() => {
     if (isConnected) {
-      console.log('Serial port is already connected.');
+      console.log("Serial port is already connected.");
     }
   }, [isConnected]);
 
@@ -35,11 +42,11 @@ const Smell = () => {
         await selectedPort.open({ baudRate: 115200 });
         setPort(selectedPort);
         setIsConnected(true);
-        console.log('Connected to serial port!');
+        console.log("Connected to serial port!");
         startReadingFromSerialPort(selectedPort);
       }
     } catch (error) {
-      console.error('Error connecting to serial port:', error);
+      console.error("Error connecting to serial port:", error);
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +57,7 @@ const Smell = () => {
       const readerInstance = port.readable.getReader();
       setReader(readerInstance); // Save the reader in context
       const decoder = new TextDecoder();
-      let buffer = '';
+      let buffer = "";
 
       while (true) {
         const { value, done } = await readerInstance.read();
@@ -60,15 +67,15 @@ const Smell = () => {
         buffer += chunk;
 
         // Process messages by splitting on newlines
-        const messages = buffer.split('\n');
+        const messages = buffer.split("\n");
         buffer = messages.pop(); // Retain incomplete message
         messages.forEach((message) => {
-          console.log('Data from Serial:', message);
-          setSerialOutput((prevOutput) => prevOutput + message + '\n');
+          console.log("Data from Serial:", message);
+          setSerialOutput((prevOutput) => prevOutput + message + "\n");
         });
       }
     } catch (error) {
-      console.error('Error reading from serial port:', error);
+      console.error("Error reading from serial port:", error);
     } finally {
       // Ensure the reader is released properly
       if (reader) {
@@ -78,12 +85,11 @@ const Smell = () => {
       }
     }
   };
-  
 
   // Send commands to Arduino (same as before)
   const sendCommandsToArduino = async (commands) => {
     if (!port) {
-      throw new Error('Serial port is not connected.');
+      throw new Error("Serial port is not connected.");
     }
 
     const writer = port.writable.getWriter();
@@ -94,7 +100,7 @@ const Smell = () => {
         console.log(`Command sent: ${command}`);
       }
     } catch (error) {
-      console.error('Error writing to serial port:', error);
+      console.error("Error writing to serial port:", error);
     } finally {
       writer.releaseLock();
     }
@@ -102,29 +108,27 @@ const Smell = () => {
 
   const disconnectSerial = async () => {
     if (!port) {
-      console.log('No port to disconnect.');
+      console.log("No port to disconnect.");
       return;
     }
 
     try {
       if (reader) {
-        console.log('Cancelling the current reader...');
+        console.log("Cancelling the current reader...");
         await reader.cancel();
         reader.releaseLock();
         setReader(null);
-        console.log('Reader released.');
+        console.log("Reader released.");
       }
 
       await port.close();
       setPort(null);
       setIsConnected(false);
-      console.log('Serial port disconnected successfully.');
+      console.log("Serial port disconnected successfully.");
     } catch (error) {
-      console.error('Error disconnecting from serial port:', error);
+      console.error("Error disconnecting from serial port:", error);
     }
   };
-  
-
 
   const handleToggleChannel = (index) => {
     const updatedChannels = [...localChannels];
@@ -144,7 +148,7 @@ const Smell = () => {
       setPreviousDuration(localChannels[index].duration); // Save the previous duration
     }
     channel.isDurationInf = !channel.isDurationInf;
-    channel.duration = channel.isDurationInf ? '' : previousDuration;
+    channel.duration = channel.isDurationInf ? "" : previousDuration;
     setLocalChannels(updatedChannels);
   };
 
@@ -181,7 +185,7 @@ const Smell = () => {
         }, parseInt(channel.duration));
       }
     } catch (error) {
-      console.error('Error sending command to Arduino:', error);
+      console.error("Error sending command to Arduino:", error);
     }
   };
 
@@ -194,7 +198,7 @@ const Smell = () => {
     try {
       await sendCommandsToArduino([`${index + 1} 0 0`]); // Send deactivation command
     } catch (error) {
-      console.error('Error sending deactivation command to Arduino:', error);
+      console.error("Error sending deactivation command to Arduino:", error);
     }
   };
 
@@ -205,8 +209,13 @@ const Smell = () => {
     const deactivationTimes = {};
 
     updatedChannels.forEach((channel, index) => {
-      if (channel.isChannelEnabled && (channel.isDurationInf || channel.duration)) {
-        activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
+      if (
+        channel.isChannelEnabled &&
+        (channel.isDurationInf || channel.duration)
+      ) {
+        activationCommands.push(
+          `${index + 1} 1 ${channel.isDurationInf ? "inf" : channel.duration}`
+        );
         if (!channel.isDurationInf) {
           if (!deactivationTimes[channel.duration]) {
             deactivationTimes[channel.duration] = [];
@@ -224,17 +233,17 @@ const Smell = () => {
 
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
-            const deactivateCommands = indices.map(index => `${index} 0 0`);
+            const deactivateCommands = indices.map((index) => `${index} 0 0`);
             await sendCommandsToArduino(deactivateCommands);
             const updated = [...localChannels];
-            indices.forEach(index => {
+            indices.forEach((index) => {
               updated[index - 1].isActivated = false; // Correcting for zero-based indexing
             });
             setLocalChannels(updated);
           }, parseInt(duration));
         });
       } catch (error) {
-        console.error('Error sending commands to Arduino:', error);
+        console.error("Error sending commands to Arduino:", error);
       }
     }
   };
@@ -247,7 +256,9 @@ const Smell = () => {
 
     updatedChannels.forEach((channel, index) => {
       if (channel.isDurationInf || channel.duration) {
-        activationCommands.push(`${index + 1} 1 ${channel.isDurationInf ? 'inf' : channel.duration}`);
+        activationCommands.push(
+          `${index + 1} 1 ${channel.isDurationInf ? "inf" : channel.duration}`
+        );
         if (!channel.isDurationInf) {
           if (!deactivationTimes[channel.duration]) {
             deactivationTimes[channel.duration] = [];
@@ -266,10 +277,10 @@ const Smell = () => {
 
         Object.entries(deactivationTimes).forEach(([duration, indices]) => {
           setTimeout(async () => {
-            const deactivateCommands = indices.map(index => `${index} 0 0`);
+            const deactivateCommands = indices.map((index) => `${index} 0 0`);
             await sendCommandsToArduino(deactivateCommands);
             const updated = [...localChannels];
-            indices.forEach(index => {
+            indices.forEach((index) => {
               updated[index - 1].isActivated = false;
               updated[index - 1].isChannelEnabled = false; // Turn off the channel when deactivated
             });
@@ -277,26 +288,30 @@ const Smell = () => {
           }, parseInt(duration));
         });
       } catch (error) {
-        console.error('Error sending commands to Arduino:', error);
+        console.error("Error sending commands to Arduino:", error);
       }
     }
   };
 
   // Deactivate all channels
   const handleDeactivateAll = async () => {
-    const activeChannels = localChannels.filter(channel => channel.isActivated);
+    const activeChannels = localChannels.filter(
+      (channel) => channel.isActivated
+    );
     if (activeChannels.length > 0) {
       const updatedChannels = localChannels.map((channel) => ({
         ...channel,
         isChannelEnabled: false,
         isActivated: false,
       }));
-      const deactivationCommands = updatedChannels.map((channel, index) => `${index + 1} 0 0`);
+      const deactivationCommands = updatedChannels.map(
+        (channel, index) => `${index + 1} 0 0`
+      );
       try {
         await sendCommandsToArduino(deactivationCommands);
         setLocalChannels(updatedChannels);
       } catch (error) {
-        console.error('Error sending commands to Arduino:', error);
+        console.error("Error sending commands to Arduino:", error);
       }
     }
   };
@@ -306,8 +321,12 @@ const Smell = () => {
       {!isConnected ? (
         <div className="connection-prompt">
           <h1>Connect to Arduino</h1>
-          <button className="connectButton ConnectButton" onClick={connectSerial} disabled={isLoading}>
-            {isLoading ? 'Connecting...' : 'Connect to Serial Port'}
+          <button
+            className="connectButton ConnectButton"
+            onClick={connectSerial}
+            disabled={isLoading}
+          >
+            {isLoading ? "Connecting..." : "Connect to Serial Port"}
           </button>
         </div>
       ) : (
@@ -317,16 +336,53 @@ const Smell = () => {
             <img className="circle2" src={circle2} alt="background" />
             <div className="color"></div>
           </div>
-  
-          <div className="container-header">
-            <h1>Flavour Communication</h1>
+
+          <div className="flex flex-row justify-between items-center w-[80vw] px-11 gap-x-8 z-20 mt-2">
+            {/* Left Section */}
+            <div>
+              <h1 className="text-2xl text-left font-semibold">
+                Flavour Communication
+              </h1>
+            </div>
+
+            {/* Right Section */}
+            <div className="flex flex-row gap-x-8 items-center">
+              <button
+                className="text-black text-lg font-medium hover:text-blue-700 focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer"
+                onClick={() => navigate("/smell")}
+              >
+                Smell
+                <span>
+                  <i className="ml-2 fa-solid fa-door-open"></i>
+                </span>
+              </button>
+              <button
+                className="text-black text-lg font-medium hover:text-blue-700 focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer"
+                onClick={() => navigate("/taste")}
+              >
+                Taste
+                <span>
+                  <i className="ml-2 fa-solid fa-door-open"></i>
+                </span>
+              </button>
+              <button
+                className="text-black text-lg font-medium hover:text-blue-700 focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer"
+                onClick={disconnectSerial}
+                disabled={!isConnected}
+              >
+                Disconnect Serial
+                <span>
+                  <i className="ml-2 fa-solid fa-plug-circle-xmark"></i>
+                </span>
+              </button>
+            </div>
           </div>
-  
+
           <div className="container-body">
             <div className="test">
               <h3>Olfactory Interface</h3>
             </div>
-  
+
             <div className="flex-container">
               <div className="box-test1">
                 <div className="title">
@@ -336,7 +392,7 @@ const Smell = () => {
                 {localChannels.map((channel, i) => (
                   <div className="channel" key={i}>
                     <p>#{i + 1}</p>
-  
+
                     <div className="toggleChannel">
                       <input
                         type="checkbox"
@@ -348,39 +404,51 @@ const Smell = () => {
                       />
                       <label htmlFor={`checkChannel${i + 1}`}></label>
                     </div>
-  
+
                     <input
                       type="text"
                       id="smellName"
-                      className={!channel.isChannelEnabled ? 'off' : 'on'}
+                      className={!channel.isChannelEnabled ? "off" : "on"}
                       placeholder="Enter smell name"
                       value={channel.smellName}
-                      disabled={!channel.isChannelEnabled || channel.isActivated}
+                      disabled={
+                        !channel.isChannelEnabled || channel.isActivated
+                      }
                       onChange={(e) => handleSmellNameChange(i, e.target.value)}
                     />
-  
+
                     <div className="duration">
                       <input
                         type="text"
                         id="duration"
-                        value={channel.isDurationInf ? '' : channel.duration}
-                        disabled={!channel.isChannelEnabled || channel.isActivated || channel.isDurationInf}
-                        onChange={(e) => handleDurationChange(i, e.target.value)}
+                        value={channel.isDurationInf ? "" : channel.duration}
+                        disabled={
+                          !channel.isChannelEnabled ||
+                          channel.isActivated ||
+                          channel.isDurationInf
+                        }
+                        onChange={(e) =>
+                          handleDurationChange(i, e.target.value)
+                        }
                       />
-  
+
                       <div className="toggleDuration">
                         <input
                           type="checkbox"
                           id={`checkDurationInf${i + 1}`}
                           hidden
                           checked={channel.isDurationInf}
-                          disabled={!channel.isChannelEnabled || channel.isActivated}
+                          disabled={
+                            !channel.isChannelEnabled || channel.isActivated
+                          }
                           onChange={() => handleToggleDuration(i)}
                         />
-                        <label htmlFor={`checkDurationInf${i + 1}`}><p>Inf</p></label>
+                        <label htmlFor={`checkDurationInf${i + 1}`}>
+                          <p>Inf</p>
+                        </label>
                       </div>
                     </div>
-  
+
                     {!channel.isActivated ? (
                       <input
                         type="button"
@@ -405,33 +473,42 @@ const Smell = () => {
                   </div>
                 ))}
               </div>
-  
+
               <div className="box-button">
-                <button className='disconnectButton DisconnectSerial' 
-                  onClick={disconnectSerial}
-                  disabled={!isConnected}
+                <button
+                  className="outsideButton ActivateSelected"
+                  onClick={handleActivateSelected}
                 >
-                  Disconnect Serial
+                  Activate Selected
                 </button>
-                <button className='outsideButton ActivateSelected' onClick={handleActivateSelected}>Activate Selected</button>
-                <button className='outsideButton ActivateAll' onClick={handleActivateAll}>Activate All</button>
-                <button className='outsideButton DeactivateAll' onClick={handleDeactivateAll}>Deactivate All</button>
+                <button
+                  className="outsideButton ActivateAll"
+                  onClick={handleActivateAll}
+                >
+                  Activate All
+                </button>
+                <button
+                  className="outsideButton DeactivateAll"
+                  onClick={handleDeactivateAll}
+                >
+                  Deactivate All
+                </button>
               </div>
             </div>
           </div>
-  
-          <div className="switch-page">
+
+          {/* <div className="switch-page">
             <button onClick={() => navigate('/taste')}>
               <span>Go to Taste</span>
               <span>
                 <i className="fa-solid fa-door-open"></i>
               </span>
             </button>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
-  );  
+  );
 };
 
 export default Smell;

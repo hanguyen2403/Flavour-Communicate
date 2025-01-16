@@ -1,4 +1,5 @@
 import React from 'react';
+import './index.css';
 import { Route, Routes } from 'react-router-dom';
 import Taste from './Pages/Taste/Taste';
 import Smell from './Pages/Smell/Smell';

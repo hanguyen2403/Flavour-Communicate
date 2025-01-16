@@ -326,28 +326,59 @@ const Taste = () => {
 
   return (
     <div className="taste">
-      {!isConnected ? (
-        <div className="connection-prompt">
+      {/* {!isConnected ? (
+        <div className="connection-prompt flex flex-col gap-y-5 text-xl font-semibold justify-center items-center">
           <h1>Connect to Arduino</h1>
-          <button className="connectButton ConnectButton" onClick={connectSerial} disabled={isLoading}>
+          <button className="text-xl font px-10 py-5 rounded bg-[#b0d6f0] text-black hover:bg-[#9ec4df] connectButton ConnectButton"  onClick={connectSerial} disabled={isLoading}>
             {isLoading ? 'Connecting...' : 'Connect to Serial Port'}
           </button>
         </div>
-      ) : (
-      <div className="container">
+      ) : ( */}
+      <div className="container11">
         <div className="container-background">
           <img className="circle1" src={circle1} alt="background" />
           <img className="circle2" src={circle2} alt="background" />
           <div className="color"></div>
         </div>
 
-        <div className="container-header">
-          <h1>Flavour Communication</h1>
+        <div className="flex flex-row justify-between items-center w-[80vw] px-11 gap-x-8 z-20 mt-2">
+          {/* Left Section */}
+          <div>
+            <h1 className="text-2xl text-left font-semibold">Flavour Communication</h1>
+          </div>
+
+          {/* Right Section */}
+          <div className="flex flex-row gap-x-8 items-center">
+            <button className="text-black text-lg font-medium hover:text-blue-700 focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer" onClick={() => navigate('/smell')}>
+              Smell
+              <span>
+                 <i className="ml-2 fa-solid fa-door-open"></i>
+              </span>
+            </button>
+            <button className="text-black text-lg font-medium hover:text-blue-700 focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer" onClick={() => navigate('/taste')}>
+              Taste
+              <span>
+                 <i className="ml-2 fa-solid fa-door-open"></i>
+              </span>
+            </button>
+            <button className="text-black text-lg font-medium hover:text-blue-700 focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer"
+                    onClick={disconnectSerial}
+                    disabled={!isConnected}>
+              Disconnect Serial
+              <span>
+                <i className="ml-2 fa-solid fa-plug-circle-xmark"></i>
+              </span>
+            </button>
+          </div>
         </div>
 
+
+
+
+
         <div className="container-body">
-          <div className="test">
-            <h3>Gustatory Interface</h3>
+          <div className="test flex align-center justify-center">
+            <h3 className='font-semibold'>Gustatory Interface</h3>
           </div>
 
           <div className="flex-container">
@@ -444,12 +475,6 @@ const Taste = () => {
             </div>
 
             <div className="box-button">
-              <button className='disconnectButton DisconnectSerial' 
-                  onClick={disconnectSerial}
-                  disabled={!isConnected}
-                >
-                  Disconnect Serial
-              </button>
               <div className="global-intensity">
                 <h3>Intensity for all:</h3>
                 <h3 className='limit'>0 - 100</h3>
@@ -476,11 +501,12 @@ const Taste = () => {
             <span>
             <i className="fa-solid fa-door-open"></i>
             </span>
-            </button>
+          </button>
         </div>
-        <div className="check">CHECK</div>
+        <div className="check"></div>
       </div>
-      )}
+      {/* )
+      } */}
     </div>
   );
 };

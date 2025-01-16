@@ -14,7 +14,7 @@
 }
 body{
     height: 100vh;
-    background: linear-gradient(120deg, #3ca7ee, #9b408f);
+    background: linear-gradient(to right, #3c7bc4, #243a5e); 
     font-family: 'Lexend', sans-serif;
     display: flex;
     /* dàn cả trang */
@@ -42,8 +42,8 @@ body{
 
 .container1 {
     /* Flavour Smell */
-    width: 1020px;
-    height: 557.69px;
+    width: 100vw;
+    height: 100vh;
     background: var(--backgroundColor);
     /* border: 1px solid #000000; */
     border-radius: 5px;
@@ -525,8 +525,7 @@ body{
 
 /* General styles for outsideButton */
 .outsideButton,
-.disconnectButton,
-.connectButton {
+.disconnectButton{
     margin-top: 8px;
     border: none;
     outline: none;
@@ -542,13 +541,8 @@ body{
     background-color: #ff6347;
 }
 
-.connectButton:hover {
-    background-color: #45a049;
-}
-
 .outsideButton:active,
-.disconnectButton:active,
-.connectButton:active {
+.disconnectButton:active{
     background: var(--whiteColor);
     color: var(--buttonColor);
     border: none;
@@ -562,8 +556,7 @@ body{
 }
 
 .outsideButton:focus,
-.disconnectButton:focus,
-.connectButton:focus {
+.disconnectButton:focus {
     outline: none;
 }
 
@@ -592,18 +585,6 @@ body{
     padding: 12px;
 }
 
-.ConnectButton {
-    background: #4CAF50;
-    height: 70px;
-    font-size: 20px;
-    font-weight: 600;
-    padding: 12px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 4px 2px;
-    border-radius: 4px;
-}
 
 .DisconnectSerial {
     background: red;
